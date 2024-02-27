@@ -1,18 +1,21 @@
 import express, { Request, Response } from "express";
 import prisma from "./prisma";
 import errorMiddleware from "./middleware/error-middleware";
+import authRouter from "./router/auth-router";
 
 const app = express();
 app.use(express.json());
 
 app.get("/", (req: Request, res: Response) => {
-  res.json({ message: "Welcome to Production Project Server..." });
+  res.json({
+    success: true,
+    Status_Code: 200,
+    message: "Welcome to Production Project Server...",
+  });
 });
 
-
-
-app.use(errorMiddleware)
-
+app.use(authRouter);
+app.use(errorMiddleware);
 
 prisma
   .$connect()
