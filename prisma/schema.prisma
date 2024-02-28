@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,15 +8,64 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(uuid())
+  id           String       @id @default(uuid())
   name         String
-  email        String   @unique
+  email        String       @unique
   password     String
   phone        String?
   address      String?
   role         String?
   image        String?
+  status       String      @default("off")
+  verified     String      @default("unverified")
   refreshToken String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  workspaces   Workspace[]
+  chats        Chat[]
+}
+
+model Workspace {
+  id        String    @id @default(uuid())
+  name      String
+  userId    String    // Changed to String as it references the id of User model
+  user      User      @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  folders   Folder[]
+}
+
+model Folder {
+  id          String    @id @default(uuid())
+  name        String
+  workspaceId String    // Changed to String as it references the id of Workspace model
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  chat Chat[]
+}
+
+model Chat {
+  id          String    @id @default(uuid())
+  chatName    String
+  isGroupChat Boolean   @default(false)
+  groupAdmin  String
+  latestMessage String
+  user        User      @relation(fields: [groupAdmin], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  messages    Message[]
+  folder Folder[]
+}
+
+
+model Message {
+  id          String    @id @default(uuid())
+  sender      String
+  receiver    String
+  chat        String
+  message     String 
+  chatRoom    Chat      @relation(fields: [chat], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
