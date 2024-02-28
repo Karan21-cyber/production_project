@@ -1,10 +1,10 @@
-import { Request, Response, NextFunction } from "express";
-import { AnyZodObject, ZodError } from "zod";
+import { type Request, type Response, type NextFunction } from 'express'
+import { type AnyZodObject, type ZodError } from 'zod'
 
 interface ZodValidationError {
-  success: false;
-  message: string;
-  issues: ZodError;
+  success: false
+  message: string
+  issues: ZodError
 }
 
 const validationMiddleware = (schema: AnyZodObject) => {
@@ -13,18 +13,18 @@ const validationMiddleware = (schema: AnyZodObject) => {
       schema.parse({
         body: req.body,
         params: req.params,
-        query: req.query,
-      });
-      next();
+        query: req.query
+      })
+      next()
     } catch (error) {
       const validationError: ZodValidationError = {
         success: false,
-        message: (error as ZodError).issues[0]?.message || "Validation failed",
-        issues: error as ZodError,
-      };
-      return res.status(400).json(validationError);
+        message: (error as ZodError).issues[0]?.message || 'Validation failed',
+        issues: error as ZodError
+      }
+      return res.status(400).json(validationError)
     }
-  };
-};
+  }
+}
 
-export default validationMiddleware;
+export default validationMiddleware
