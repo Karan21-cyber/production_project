@@ -8,7 +8,7 @@
     "lint": "eslint --ext .ts --fix src",
     "build": "npm run lint && tsc",
     "start:prod": "nodemon dist/index.js",
-    "prod:build": "npm ci && npm run build && npm run prisma:generate && npm run db:push",
+    "prod:build": "npm i && npm run build && npm run prisma:generate && npm run db:push",
     "prisma:generate": "npx prisma generate",
     "dev:start": "nodemon src/index.ts",
     "db:push": "npx prisma db push",
