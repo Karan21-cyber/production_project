@@ -5,7 +5,7 @@ const publishableKey = process.env.STRIPE_PUBLISHED_KEY;
 
 export const getPusblishedKey = asyncHandler(async (req: Request, res: Response) => {
   try {
-    console.log(publishableKey);
+    // console.log(publishableKey);
     res.status(200).json({
       success: true,
       message: "Get your publishable key",

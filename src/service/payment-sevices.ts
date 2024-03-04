@@ -5,7 +5,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 });
 
 async function createSubscriptionProduct(): Promise<void> {
-  console.log(process.env.STRIPE_SECRET_KEY);
+  // console.log(process.env.STRIPE_SECRET_KEY);
 
   try {
     const product = await stripe.products.create({
