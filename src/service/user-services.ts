@@ -20,7 +20,6 @@ export const getUserDataById = async (userId: string) => {
       email: true,
       phone: true,
       address: true,
-      role: true,
       image: true,
       createdAt: true,
       updatedAt: true,

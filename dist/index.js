@@ -18,6 +18,9 @@ const error_middleware_1 = __importDefault(require("./middleware/error-middlewar
 const auth_router_1 = __importDefault(require("./router/auth-router"));
 const payment_sevices_1 = __importDefault(require("./service/payment-sevices"));
 const user_router_1 = __importDefault(require("./router/user-router"));
+const workspace_router_1 = __importDefault(require("./router/workspace-router"));
+const folder_router_1 = __importDefault(require("./router/folder-router"));
+const files_router_1 = __importDefault(require("./router/files-router"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.get('/', (req, res) => {
@@ -27,7 +30,7 @@ app.get('/', (req, res) => {
         message: 'Welcome to Production Project Server...'
     });
 });
-app.use(auth_router_1.default, user_router_1.default);
+app.use(auth_router_1.default, user_router_1.default, workspace_router_1.default, folder_router_1.default, files_router_1.default);
 app.use(error_middleware_1.default);
 (0, payment_sevices_1.default)();
 prisma_1.default

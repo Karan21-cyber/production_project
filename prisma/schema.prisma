@@ -14,7 +14,6 @@ model User {
   password     String
   phone        String?
   address      String?
-  role         String?
   image        String?
   status       String      @default("off")
   verified     String      @default("unverified")
