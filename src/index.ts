@@ -2,11 +2,13 @@ import express, { type Request, type Response } from 'express'
 import prisma from './prisma'
 import errorMiddleware from './middleware/error-middleware'
 import authRouter from './router/auth-router'
+import createSubscriptionProduct from './service/payment-sevices'
 
 const app = express()
 app.use(express.json())
 
 app.get('/', (req: Request, res: Response) => {
+ 
   res.json({
     success: true,
     Status_Code: 200,
@@ -17,11 +19,13 @@ app.get('/', (req: Request, res: Response) => {
 app.use(authRouter)
 app.use(errorMiddleware)
 
+createSubscriptionProduct();
+
 prisma
   .$connect()
   .then(() => {
-    app.listen(3000, () => {
-      console.log('Server started on port 3000')
+    app.listen(5500, () => {
+      console.log('Server started on port 5500')
     })
   })
   .catch(async (e: Error) => {
