@@ -4,6 +4,9 @@ import errorMiddleware from './middleware/error-middleware'
 import authRouter from './router/auth-router'
 import createSubscriptionProduct from './service/payment-sevices'
 import userRouter from './router/user-router'
+import workspaceRouter from './router/workspace-router'
+import foldersRouter from './router/folder-router'
+import filesRouter from './router/files-router'
 
 const app = express()
 app.use(express.json())
@@ -17,7 +20,7 @@ app.get('/', (req: Request, res: Response) => {
   })
 })
 
-app.use(authRouter,userRouter)
+app.use(authRouter,userRouter,workspaceRouter,foldersRouter,filesRouter)
 app.use(errorMiddleware)
 
 createSubscriptionProduct();

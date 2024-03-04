@@ -6,12 +6,12 @@ import { loginUserSchema } from '../schema/user-schema'
 const router = Router()
 
 router.post(
-  '/v1/login',
+  '/spaceworld/v1/login',
   validationMiddleware(loginUserSchema),
   authController.userLogin
 )
-router.post('/v1/logout/:id', authController.userLogOut)
-router.post('/v1/refresh', authController.refreshLogin)
+router.post('/spaceworld/v1/logout/:id', authController.userLogOut)
+router.post('/spaceworld/v1/refresh', authController.refreshLogin)
 
 const authRouter = router
 export default authRouter

@@ -6,17 +6,17 @@ import { createUserSchema } from "../schema/user-schema";
 const router = Router();
 
 router.post(
-  "/v1/user",
+  "/spaceworld/v1/user",
   validationMiddleware(createUserSchema),
   userController.createUser
 );
 
-router.get("/v1/user", userController.getAllUser);
-router.get("/v1/user/:id", userController.getUserById);
-router.put("/v1/user/:id", userController.updateUser);
-router.delete("/v1/user/:id", userController.deleteUser);
+router.get("/spaceworld/v1/user", userController.getAllUser);
+router.get("/spaceworld/v1/user/:id", userController.getUserById);
+router.put("/spaceworld/v1/user/:id", userController.updateUser);
+router.delete("/spaceworld/v1/user/:id", userController.deleteUser);
 
-router.post("/v1/sendmail", userController.sendNodemailer);
+router.post("/spaceworld/v1/sendmail", userController.sendNodemailer);
 
 const userRouter = router;
 export default userRouter;
