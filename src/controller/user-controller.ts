@@ -3,7 +3,7 @@ import prisma from "../prisma";
 
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import { getUserByEmail, getUserDataById } from "../service/get-user-services";
+import { getUserByEmail, getUserDataById } from "../service/user-services";
 import nodemailer from "nodemailer";
 import asyncHandler from "../utils/async-handler";
 import HttpException from "../utils/http-exception";
@@ -117,6 +117,50 @@ const getAllUser = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const updateUser = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const reqBody = req.body;
+
+  const user = await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      ...reqBody,
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      phone: true,
+      address: true,
+      image: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+
+  return res.status(201).json({
+    success: true,
+    message: "User updated successfully",
+    data: user,
+  });
+});
+
+const deleteUser = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const user = await prisma.user.delete({
+    where: {
+      id: id,
+    },
+  });
+  return res.status(200).json({
+    success: true,
+    message: "User deleted successfully",
+    data: user,
+  });
+});
+
 const sendNodemailer = asyncHandler(async (req: Request, res: Response) => {
   const { name, email } = req.body;
 
@@ -155,6 +199,8 @@ const userController = {
   getUserById,
   getAllUser,
   sendNodemailer,
+  updateUser,
+  deleteUser,
 };
 
 export default userController;

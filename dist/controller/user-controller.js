@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const prisma_1 = __importDefault(require("../prisma"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const get_user_services_1 = require("../service/get-user-services");
+const user_services_1 = require("../service/user-services");
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const async_handler_1 = __importDefault(require("../utils/async-handler"));
 const http_exception_1 = __importDefault(require("../utils/http-exception"));
@@ -25,7 +25,7 @@ const mail_template_1 = require("../utils/mail-template");
 const createUser = (0, async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const reqBody = req.body;
     const email = reqBody.email.trim().toLowerCase();
-    const userExist = yield (0, get_user_services_1.getUserByEmail)(email);
+    const userExist = yield (0, user_services_1.getUserByEmail)(email);
     if (userExist)
         throw new http_exception_1.default(400, "User already exist");
     const password = reqBody === null || reqBody === void 0 ? void 0 : reqBody.password;
@@ -54,7 +54,7 @@ res) => __awaiter(void 0, void 0, void 0, function* () {
     const reqBody = req === null || req === void 0 ? void 0 : req.file;
     const { id } = (req === null || req === void 0 ? void 0 : req.params) || {};
     const filePath = reqBody === null || reqBody === void 0 ? void 0 : reqBody.path;
-    const userImage = yield (0, get_user_services_1.getUserDataById)(id);
+    const userImage = yield (0, user_services_1.getUserDataById)(id);
     let result;
     //   delete previous image and upload new image
     if (userImage === null || userImage === void 0 ? void 0 : userImage.image) {
@@ -83,7 +83,7 @@ res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const getUserById = (0, async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const user = yield (0, get_user_services_1.getUserDataById)(id);
+    const user = yield (0, user_services_1.getUserDataById)(id);
     return res.status(200).json({
         success: true,
         message: "User fetched successfully",
@@ -107,6 +107,44 @@ const getAllUser = (0, async_handler_1.default)((req, res) => __awaiter(void 0, 
         success: true,
         message: "Users fetched successfully",
         data: users,
+    });
+}));
+const updateUser = (0, async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const reqBody = req.body;
+    const user = yield prisma_1.default.user.update({
+        where: {
+            id: id,
+        },
+        data: Object.assign({}, reqBody),
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+            address: true,
+            image: true,
+            createdAt: true,
+            updatedAt: true,
+        },
+    });
+    return res.status(201).json({
+        success: true,
+        message: "User updated successfully",
+        data: user,
+    });
+}));
+const deleteUser = (0, async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const user = yield prisma_1.default.user.delete({
+        where: {
+            id: id,
+        },
+    });
+    return res.status(200).json({
+        success: true,
+        message: "User deleted successfully",
+        data: user,
     });
 }));
 const sendNodemailer = (0, async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -145,5 +183,7 @@ const userController = {
     getUserById,
     getAllUser,
     sendNodemailer,
+    updateUser,
+    deleteUser,
 };
 exports.default = userController;

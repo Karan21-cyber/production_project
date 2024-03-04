@@ -8,7 +8,7 @@ import {
   isRefereshTokenExpired,
 } from "../service/get-token";
 import HttpException from "../utils/http-exception";
-import { getUserByEmail } from "../service/get-user-services";
+import { getUserByEmail } from "../service/user-services";
 
 const userLogin = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {

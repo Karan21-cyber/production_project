@@ -16,6 +16,8 @@ const express_1 = __importDefault(require("express"));
 const prisma_1 = __importDefault(require("./prisma"));
 const error_middleware_1 = __importDefault(require("./middleware/error-middleware"));
 const auth_router_1 = __importDefault(require("./router/auth-router"));
+const payment_sevices_1 = __importDefault(require("./service/payment-sevices"));
+const user_router_1 = __importDefault(require("./router/user-router"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.get('/', (req, res) => {
@@ -25,13 +27,14 @@ app.get('/', (req, res) => {
         message: 'Welcome to Production Project Server...'
     });
 });
-app.use(auth_router_1.default);
+app.use(auth_router_1.default, user_router_1.default);
 app.use(error_middleware_1.default);
+(0, payment_sevices_1.default)();
 prisma_1.default
     .$connect()
     .then(() => {
-    app.listen(3000, () => {
-        console.log('Server started on port 3000');
+    app.listen(5500, () => {
+        console.log('Server started on port 5500');
     });
 })
     .catch((e) => __awaiter(void 0, void 0, void 0, function* () {

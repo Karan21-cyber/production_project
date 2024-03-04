@@ -23,6 +23,7 @@ model User {
   updatedAt    DateTime    @updatedAt
   workspaces   Workspace[]
   chats        Chat[]
+  members Members[]
 }
 
 model Workspace {
@@ -33,7 +34,18 @@ model Workspace {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   folders   Folder[]
+  member Members[]
 }
+
+model Members{
+  id String @id @default(uuid())
+  workspaceId String
+  workspace Workspace  @relation(fields: [workspaceId], references: [id])
+  user User[]
+   createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
 
 model Folder {
   id          String    @id @default(uuid())
@@ -42,7 +54,17 @@ model Folder {
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  chat Chat[]
+  chat        Chat[]
+  files       File[]    // Added opposite relation field
+}
+
+model File {
+  id          String    @id @default(uuid())
+  name        String
+  folderId    String    // Changed to String as it references the id of Folder model
+  folder      Folder    @relation(fields: [folderId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Chat {

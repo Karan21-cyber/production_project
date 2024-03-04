@@ -3,6 +3,7 @@ import prisma from './prisma'
 import errorMiddleware from './middleware/error-middleware'
 import authRouter from './router/auth-router'
 import createSubscriptionProduct from './service/payment-sevices'
+import userRouter from './router/user-router'
 
 const app = express()
 app.use(express.json())
@@ -16,7 +17,7 @@ app.get('/', (req: Request, res: Response) => {
   })
 })
 
-app.use(authRouter)
+app.use(authRouter,userRouter)
 app.use(errorMiddleware)
 
 createSubscriptionProduct();

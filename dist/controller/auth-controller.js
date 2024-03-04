@@ -17,12 +17,12 @@ const prisma_1 = __importDefault(require("../prisma"));
 const async_handler_1 = __importDefault(require("../utils/async-handler"));
 const get_token_1 = require("../service/get-token");
 const http_exception_1 = __importDefault(require("../utils/http-exception"));
-const get_user_services_1 = require("../service/get-user-services");
+const user_services_1 = require("../service/user-services");
 const userLogin = (0, async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const reqBody = req.body;
         const email = reqBody === null || reqBody === void 0 ? void 0 : reqBody.email.trim().toLowerCase();
-        const user = yield (0, get_user_services_1.getUserByEmail)(email);
+        const user = yield (0, user_services_1.getUserByEmail)(email);
         if (!user)
             throw new http_exception_1.default(400, "User not found");
         const comparePassword = yield bcrypt_1.default.compare(reqBody === null || reqBody === void 0 ? void 0 : reqBody.password, user === null || user === void 0 ? void 0 : user.password);
