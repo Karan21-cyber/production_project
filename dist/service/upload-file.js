@@ -12,34 +12,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserDataById = exports.getUserByEmail = void 0;
-const prisma_1 = __importDefault(require("../prisma"));
-const getUserByEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield prisma_1.default.user.findUnique({
-        where: {
-            email,
-        },
-    });
-    return user;
+exports.uploadImageFile = void 0;
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const cloudinary_1 = __importDefault(require("../utils/cloudinary"));
+const multer_1 = __importDefault(require("multer"));
+const fs_1 = __importDefault(require("fs"));
+const http_exception_1 = __importDefault(require("../utils/http-exception"));
+const upload = (0, multer_1.default)({
+    dest: "./uploads",
 });
-exports.getUserByEmail = getUserByEmail;
-const getUserDataById = (userId) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield prisma_1.default.user.findUnique({
-        where: {
-            id: userId,
-        },
-        select: {
-            id: true,
-            name: true,
-            email: true,
-            phone: true,
-            address: true,
-            role: true,
-            image: true,
-            createdAt: true,
-            updatedAt: true,
-        },
-    });
-    return user;
+exports.default = upload;
+const uploadImageFile = (filePath) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield cloudinary_1.default.uploader.upload(filePath);
+    if (!result) {
+        throw new http_exception_1.default(400, "Unable to upload file.");
+    }
+    fs_1.default.unlinkSync(filePath);
+    return result;
 });
-exports.getUserDataById = getUserDataById;
+exports.uploadImageFile = uploadImageFile;
