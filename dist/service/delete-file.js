@@ -12,34 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserDataById = exports.getUserByEmail = void 0;
-const prisma_1 = __importDefault(require("../prisma"));
-const getUserByEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield prisma_1.default.user.findUnique({
-        where: {
-            email,
-        },
+exports.deleteImage = void 0;
+const cloudinary_1 = __importDefault(require("../utils/cloudinary"));
+const get_ids_1 = require("./get-ids");
+const deleteImage = (imageurl) => __awaiter(void 0, void 0, void 0, function* () {
+    const public_id = (0, get_ids_1.getPublicId)(imageurl);
+    const result = yield cloudinary_1.default.uploader.destroy(public_id, {
+        invalidate: true,
     });
-    return user;
+    return result;
 });
-exports.getUserByEmail = getUserByEmail;
-const getUserDataById = (userId) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield prisma_1.default.user.findUnique({
-        where: {
-            id: userId,
-        },
-        select: {
-            id: true,
-            name: true,
-            email: true,
-            phone: true,
-            address: true,
-            role: true,
-            image: true,
-            createdAt: true,
-            updatedAt: true,
-        },
-    });
-    return user;
-});
-exports.getUserDataById = getUserDataById;
+exports.deleteImage = deleteImage;

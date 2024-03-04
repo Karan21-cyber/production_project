@@ -12,11 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const asyncHandler = (controller) => {
     return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            yield controller(req, res, next);
+            yield controller(req, res);
         }
-        catch (error) {
-            console.log("Error", error);
-            next(error);
+        catch (err) {
+            console.log("Error: ", err);
+            return next(err);
         }
     });
 };
