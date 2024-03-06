@@ -23,11 +23,11 @@ const folder_router_1 = __importDefault(require("./router/folder-router"));
 const files_router_1 = __importDefault(require("./router/files-router"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
     res.json({
         success: true,
         Status_Code: 200,
-        message: 'Welcome to Production Project Server...'
+        message: "Welcome to Production Project Server...",
     });
 });
 app.use(auth_router_1.default, user_router_1.default, workspace_router_1.default, folder_router_1.default, files_router_1.default);
@@ -37,11 +37,9 @@ prisma_1.default
     .$connect()
     .then(() => {
     app.listen(5500, () => {
-        console.log('Server started on port 5500');
+        console.log("Server started on port 5500");
     });
 })
     .catch((e) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(e.message);
-    yield prisma_1.default.$disconnect();
-    process.exit(1);
 }));

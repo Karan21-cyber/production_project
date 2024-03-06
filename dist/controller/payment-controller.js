@@ -17,7 +17,7 @@ const async_handler_1 = __importDefault(require("../utils/async-handler"));
 const publishableKey = process.env.STRIPE_PUBLISHED_KEY;
 exports.getPusblishedKey = (0, async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log(publishableKey);
+        // console.log(publishableKey);
         res.status(200).json({
             success: true,
             message: "Get your publishable key",

@@ -18,7 +18,7 @@ const stripe = new stripe_1.default(process.env.STRIPE_SECRET_KEY, {
 });
 function createSubscriptionProduct() {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log(process.env.STRIPE_SECRET_KEY);
+        // console.log(process.env.STRIPE_SECRET_KEY);
         try {
             const product = yield stripe.products.create({
                 name: "Starter Subscription",
