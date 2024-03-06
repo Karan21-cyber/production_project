@@ -4,8 +4,7 @@ import fileController from "../controller/file-controller";
 const router = Router();
 
 router.post(
-  "/spaceworld/v1/files",
-
+  "/spaceworld/v1/files/:folderId",
   fileController.createfile
 );
 
