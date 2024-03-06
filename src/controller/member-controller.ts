@@ -138,7 +138,7 @@ const getMemberByFolderId = asyncHandler(
 );
 const getMemberBySearch = asyncHandler(async (req: Request, res: Response) => {
     const querySearch = req.query;
-    const searchString = querySearch.search as string | undefined;
+    const searchString = querySearch.search as string;
   
     if (!searchString) {
       return res.status(400).json({
@@ -147,33 +147,23 @@ const getMemberBySearch = asyncHandler(async (req: Request, res: Response) => {
       });
     }
   
-    const members = await prisma.members.findMany({
-      where: {
-        user: {
-          name: {
-            contains: searchString,
-          },
-        },
-      },
-      select: {
-        id: true,
-        workspaceId: true,
-        createdAt: true,
-        updatedAt: true,
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            phone: true,
-            address: true,
-            image: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-        },
-      },
-    });
+   const members = await prisma.user.findMany({
+     where: {
+       name:{
+         contains: searchString
+       }
+     },
+     select:{
+       id: true,
+       name: true,
+       email: true,
+       phone: true,
+       address: true,
+       image: true,
+       createdAt: true,
+       updatedAt: true,
+     }
+   })
   
     return res.status(200).json({
       success: true,
