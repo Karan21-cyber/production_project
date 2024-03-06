@@ -60,6 +60,7 @@ model Folder {
 model File {
   id          String    @id @default(uuid())
   name        String
+  content     String?
   folderId    String    // Changed to String as it references the id of Folder model
   folder      Folder    @relation(fields: [folderId], references: [id])
   createdAt   DateTime  @default(now())
