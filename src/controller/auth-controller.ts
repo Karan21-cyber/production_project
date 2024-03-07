@@ -13,7 +13,7 @@ import { getUserByEmail } from "../service/user-services";
 const userLogin = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     try {
-      // const reqBody = req.body;
+      const reqBody = req.body;
       const email = reqBody?.email.trim().toLowerCase();
 
       const user = await getUserByEmail(email);

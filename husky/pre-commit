@@ -1,5 +1,0 @@
-{
-  "run": {
-    "lint-staged": "lint-staged"
-  }
-}
