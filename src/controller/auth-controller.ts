@@ -12,20 +12,34 @@ import HttpException from "../utils/http-exception";
 import { getUserByEmail } from "../service/user-services";
 
 const userLogin = asyncHandler(
-  async (req: Request, res: Response): Promise<Response<any, Record<string, any>>> => {
+  async (
+    req: Request,
+    res: Response
+  ): Promise<Response<any, Record<string, any>>> => {
     const reqBody = req.body;
     const email = reqBody?.email.trim().toLowerCase();
 
     const user = await getUserByEmail(email);
 
-    if (!user) throw new HttpException(400, "User not found");
+    // if (!user) throw new HttpException(400, "User not found");
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User not found" });
+    }
 
     const comparePassword = await bcrypt.compare(
       reqBody?.password,
       user?.password
     );
 
-    if (!comparePassword) throw new HttpException(400, "Invalid Credential.");
+    // if (!comparePassword) throw new HttpException(400, "Invalid credentials");
+
+    if (!comparePassword) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid credentials" });
+    }
 
     const workspace = await prisma.workspace.findMany({
       where: {
@@ -44,7 +58,8 @@ const userLogin = asyncHandler(
       secure: true,
     };
 
-    return res.status(200)
+    return res
+      .status(200)
       .cookie("accessToken", token?.accessToken, options)
       .cookie("refreshToken", token?.refreshToken, options)
       .json({
@@ -63,7 +78,10 @@ const userLogin = asyncHandler(
 );
 
 const userLogOut = asyncHandler(
-  async (req: Request, res: Response): Promise<Response<any, Record<string, any>>> => {
+  async (
+    req: Request,
+    res: Response
+  ): Promise<Response<any, Record<string, any>>> => {
     const { id } = req.params;
 
     const user = await prisma.user.findUnique({
@@ -97,7 +115,10 @@ const userLogOut = asyncHandler(
 );
 
 const refreshLogin = asyncHandler(
-  async (req: Request, res: Response): Promise<Response<any, Record<string, any>>> => {
+  async (
+    req: Request,
+    res: Response
+  ): Promise<Response<any, Record<string, any>>> => {
     const { refreshToken } = req.query;
 
     if (typeof refreshToken !== "string") {
