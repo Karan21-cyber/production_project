@@ -10,7 +10,6 @@ export const createUserSchema = z.object({
     lname: z
       .string({ required_error: "Last Name is required." })
       .min(3, "Minimun 3 characters is required."),
-
     email: z
       .string({ required_error: "Email is required" })
       .email("Invalid email."),
