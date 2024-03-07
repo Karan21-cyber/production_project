@@ -27,7 +27,8 @@ const createUser = asyncHandler(async (req: Request, res: Response) => {
     data: { ...reqBody, email, password: hashpassword },
     select: {
       id: true,
-      name: true,
+      fname: true,
+      lname: true,
       email: true,
       phone: true,
       address: true,
@@ -100,7 +101,8 @@ const getAllUser = asyncHandler(async (req: Request, res: Response) => {
   const users = await prisma.user.findMany({
     select: {
       id: true,
-      name: true,
+      fname: true,
+      lname: true,
       email: true,
       phone: true,
       address: true,
@@ -130,7 +132,8 @@ const updateUser = asyncHandler(async (req: Request, res: Response) => {
     },
     select: {
       id: true,
-      name: true,
+      fname: true,
+      lname: true,
       email: true,
       phone: true,
       address: true,

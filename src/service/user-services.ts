@@ -16,7 +16,8 @@ export const getUserDataById = async (userId: string) => {
     },
     select: {
       id: true,
-      name: true,
+      fname: true,
+      lname: true,
       email: true,
       phone: true,
       address: true,
@@ -27,5 +28,3 @@ export const getUserDataById = async (userId: string) => {
   });
   return user;
 };
-
-

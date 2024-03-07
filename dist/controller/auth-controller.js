@@ -43,7 +43,8 @@ const userLogin = (0, async_handler_1.default)((req, res) => __awaiter(void 0, v
             data: {
                 id: user === null || user === void 0 ? void 0 : user.id,
                 email: user === null || user === void 0 ? void 0 : user.email,
-                name: user === null || user === void 0 ? void 0 : user.name,
+                fname: user === null || user === void 0 ? void 0 : user.fname,
+                lname: user === null || user === void 0 ? void 0 : user.lname,
                 phone: user === null || user === void 0 ? void 0 : user.phone,
                 image: user === null || user === void 0 ? void 0 : user.image,
                 address: user === null || user === void 0 ? void 0 : user.address,

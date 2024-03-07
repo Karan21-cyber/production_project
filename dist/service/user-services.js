@@ -30,7 +30,8 @@ const getUserDataById = (userId) => __awaiter(void 0, void 0, void 0, function* 
         },
         select: {
             id: true,
-            name: true,
+            fname: true,
+            lname: true,
             email: true,
             phone: true,
             address: true,

@@ -44,7 +44,8 @@ const userLogin = asyncHandler(
           data: {
             id: user?.id,
             email: user?.email,
-            name: user?.name,
+            fname: user?.fname,
+            lname: user?.lname,
             phone: user?.phone,
             image: user?.image,
             address: user?.address,

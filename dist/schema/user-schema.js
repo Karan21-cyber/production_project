@@ -29,65 +29,69 @@ const z = __importStar(require("zod"));
 // Create User Schema
 exports.createUserSchema = z.object({
     body: z.object({
-        name: z
-            .string({ required_error: 'Name is required.' })
-            .min(3, 'Minimun 3 characters is required.'),
+        fname: z
+            .string({ required_error: "First Name is required." })
+            .min(3, "Minimun 3 characters is required."),
+        lname: z
+            .string({ required_error: "Last Name is required." })
+            .min(3, "Minimun 3 characters is required."),
         email: z
-            .string({ required_error: 'Email is required' })
-            .email('Invalid email.'),
+            .string({ required_error: "Email is required" })
+            .email("Invalid email."),
         password: z
-            .string({ required_error: 'Password is required.' })
+            .string({ required_error: "Password is required." })
             .refine((value) => value.length > 6, {
-            message: 'Password must be at least 6 characters.'
+            message: "Password must be at least 6 characters.",
         })
             .refine((value) => /[A-Z]/.test(value), {
-            message: 'Password must contain at least one uppercase character.'
+            message: "Password must contain at least one uppercase character.",
         })
             .refine((value) => /[a-z]/.test(value), {
-            message: 'Password must contain at least one lowercase character.'
+            message: "Password must contain at least one lowercase character.",
         })
             .refine((value) => /\d/.test(value), {
-            message: 'Password must contain at least one number.'
+            message: "Password must contain at least one number.",
         })
             .refine((value) => /[!@#$%^&*(),.?":{}|<>]/.test(value), {
-            message: 'Password must contain at least one special character.'
+            message: "Password must contain at least one special character.",
         }),
         phone: z.string().nullable(),
-        address: z.string().nullable()
-    })
+        address: z.string().nullable(),
+        gender: z.string().nullable(),
+    }),
 });
 // update User Schema
 exports.updateUserSchema = z.object({
     body: z.object({
         name: z
-            .string({ required_error: 'Name is required.' })
-            .min(3, 'Minimun 3 characters is required.')
+            .string({ required_error: "Name is required." })
+            .min(3, "Minimun 3 characters is required."),
     }),
     phone: z.string().nullable(),
-    address: z.string().nullable()
+    address: z.string().nullable(),
 });
 // user login UserSchema
 exports.loginUserSchema = z.object({
     body: z.object({
         email: z
-            .string({ required_error: 'Email is required.' })
-            .email('Invalid email.'),
+            .string({ required_error: "Email is required." })
+            .email("Invalid email."),
         password: z
-            .string({ required_error: 'Password is required.' })
+            .string({ required_error: "Password is required." })
             .refine((value) => value.length > 6, {
-            message: 'Password must be at least 6 characters.'
+            message: "Password must be at least 6 characters.",
         })
             .refine((value) => /[A-Z]/.test(value), {
-            message: 'Password must contain at least one uppercase character.'
+            message: "Password must contain at least one uppercase character.",
         })
             .refine((value) => /[a-z]/.test(value), {
-            message: 'Password must contain at least one lowercase character.'
+            message: "Password must contain at least one lowercase character.",
         })
             .refine((value) => /\d/.test(value), {
-            message: 'Password must contain at least one number.'
+            message: "Password must contain at least one number.",
         })
             .refine((value) => /[!@#$%^&*(),.?":{}|<>]/.test(value), {
-            message: 'Password must contain at least one special character.'
-        })
-    })
+            message: "Password must contain at least one special character.",
+        }),
+    }),
 });

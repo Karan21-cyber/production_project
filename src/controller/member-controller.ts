@@ -14,7 +14,8 @@ export const createmember = asyncHandler(
         user: {
           select: {
             id: true,
-            name: true,
+            fname: true,
+            lname: true,
             email: true,
             phone: true,
             address: true,
@@ -49,7 +50,8 @@ const getmemberByWorkspaceId = asyncHandler(
         user: {
           select: {
             id: true,
-            name: true,
+            fname: true,
+            lname: true,
             email: true,
             phone: true,
             address: true,
@@ -81,7 +83,8 @@ const getAllmember = asyncHandler(async (req: Request, res: Response) => {
       user: {
         select: {
           id: true,
-          name: true,
+          fname: true,
+          lname: true,
           email: true,
           phone: true,
           address: true,
@@ -115,7 +118,8 @@ const getMemberByFolderId = asyncHandler(
         user: {
           select: {
             id: true,
-            name: true,
+            fname: true,
+            lname: true,
             email: true,
             phone: true,
             address: true,
@@ -137,41 +141,44 @@ const getMemberByFolderId = asyncHandler(
   }
 );
 const getMemberBySearch = asyncHandler(async (req: Request, res: Response) => {
-    const querySearch = req.query;
-    const searchString = querySearch.search as string;
-  
-    if (!searchString) {
-      return res.status(400).json({
-        success: false,
-        message: "Missing search parameter",
-      });
-    }
-  
-   const members = await prisma.user.findMany({
-     where: {
-       name:{
-         contains: searchString
-       }
-     },
-     select:{
-       id: true,
-       name: true,
-       email: true,
-       phone: true,
-       address: true,
-       image: true,
-       createdAt: true,
-       updatedAt: true,
-     }
-   })
-  
-    return res.status(200).json({
-      success: true,
-      message: "Members fetched successfully",
-      data: members,
+  const querySearch = req.query;
+  const searchString = querySearch.search as string;
+
+  if (!searchString) {
+    return res.status(400).json({
+      success: false,
+      message: "Missing search parameter",
     });
+  }
+
+  const members = await prisma.user.findMany({
+    where: {
+      fname: {
+        contains: searchString,
+      },
+      lname: {
+        contains: searchString,
+      },
+    },
+    select: {
+      id: true,
+      fname: true,
+      lname: true,
+      email: true,
+      phone: true,
+      address: true,
+      image: true,
+      createdAt: true,
+      updatedAt: true,
+    },
   });
-  
+
+  return res.status(200).json({
+    success: true,
+    message: "Members fetched successfully",
+    data: members,
+  });
+});
 
 export const updatemember = asyncHandler(
   async (req: Request, res: Response) => {
@@ -190,7 +197,8 @@ export const updatemember = asyncHandler(
         user: {
           select: {
             id: true,
-            name: true,
+            fname: true,
+            lname: true,
             email: true,
             phone: true,
             address: true,
@@ -225,7 +233,8 @@ const deletemember = asyncHandler(async (req: Request, res: Response) => {
       user: {
         select: {
           id: true,
-          name: true,
+          fname: true,
+          lname: true,
           email: true,
           phone: true,
           address: true,
