@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint --ext .ts --fix src",
@@ -16,18 +15,13 @@
     "db:push": "npx prisma db push",
     "db:pull": "npx prisma db pull"
   },
-  "husky": {
-      "hooks": {
-      "pre-commit": "lint-staged"
-      }
-    },
-    "lint-staged": {
-      "*.ts": [
+  "lint-staged": {
+    "*.ts": [
       "eslint — fix",
       "prettier — write",
       "git add"
     ]
-    },
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
