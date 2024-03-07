@@ -7,7 +7,7 @@
     "test": "jest",
     "lint": "eslint --ext .ts --fix src",
     "build": "npm run lint && tsc",
-    "precommit": "npm run build && npm test",
+    "precommit": "npm run build && npm run test",
     "start:prod": "nodemon dist/index.js",
     "prod:build": "npm i && npm run build && npm run prisma:generate && npm run db:push",
     "prisma:generate": "npx prisma generate",
