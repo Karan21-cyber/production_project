@@ -27,6 +27,16 @@ const userLogin = asyncHandler(
 
       if (!comparePassword) throw new HttpException(400, "Invalid Credential.");
 
+      const workspace = await prisma.workspace.findMany({
+        where: {
+          userId: user?.id,
+        },
+        select: {
+          id: true,
+          name: true,
+        },
+      });
+
       const token = await getAccessTokenAndRefereshToken(user?.id);
 
       const options = {
@@ -43,17 +53,12 @@ const userLogin = asyncHandler(
           message: "User logged in successfully",
           data: {
             id: user?.id,
-            email: user?.email,
-            fname: user?.fname,
-            lname: user?.lname,
-            phone: user?.phone,
-            image: user?.image,
-            address: user?.address,
             token: token?.accessToken,
             refreshToken: token?.refreshToken,
             createdAt: user?.createdAt,
             updatedAt: user?.updatedAt,
           },
+          workspace: workspace,
         });
     } catch (error) {
       console.log(error); // Call next with the error to propagate it to the error handler
