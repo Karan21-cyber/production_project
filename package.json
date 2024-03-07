@@ -10,6 +10,7 @@
     "start:prod": "nodemon dist/index.js",
     "prod:build": "npm i && npm run build && npm run prisma:generate && npm run db:push",
     "prisma:generate": "npx prisma generate",
+    "prisma:migrate":"npx prisma migrate dev",
     "dev:start": "nodemon src/index.ts",
     "db:push": "npx prisma db push",
     "db:pull": "npx prisma db pull"
