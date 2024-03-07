@@ -44,6 +44,7 @@ const createUser = (0, async_handler_1.default)((req, res) => __awaiter(void 0, 
             updatedAt: true,
         },
     });
+    console.log(user);
     return res.status(201).json({
         success: true,
         message: "User created successfully",

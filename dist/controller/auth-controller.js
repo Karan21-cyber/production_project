@@ -28,6 +28,15 @@ const userLogin = (0, async_handler_1.default)((req, res) => __awaiter(void 0, v
         const comparePassword = yield bcrypt_1.default.compare(reqBody === null || reqBody === void 0 ? void 0 : reqBody.password, user === null || user === void 0 ? void 0 : user.password);
         if (!comparePassword)
             throw new http_exception_1.default(400, "Invalid Credential.");
+        const workspace = yield prisma_1.default.workspace.findMany({
+            where: {
+                userId: user === null || user === void 0 ? void 0 : user.id,
+            },
+            select: {
+                id: true,
+                name: true,
+            },
+        });
         const token = yield (0, get_token_1.getAccessTokenAndRefereshToken)(user === null || user === void 0 ? void 0 : user.id);
         const options = {
             httpOnly: true,
@@ -42,17 +51,12 @@ const userLogin = (0, async_handler_1.default)((req, res) => __awaiter(void 0, v
             message: "User logged in successfully",
             data: {
                 id: user === null || user === void 0 ? void 0 : user.id,
-                email: user === null || user === void 0 ? void 0 : user.email,
-                fname: user === null || user === void 0 ? void 0 : user.fname,
-                lname: user === null || user === void 0 ? void 0 : user.lname,
-                phone: user === null || user === void 0 ? void 0 : user.phone,
-                image: user === null || user === void 0 ? void 0 : user.image,
-                address: user === null || user === void 0 ? void 0 : user.address,
                 token: token === null || token === void 0 ? void 0 : token.accessToken,
                 refreshToken: token === null || token === void 0 ? void 0 : token.refreshToken,
                 createdAt: user === null || user === void 0 ? void 0 : user.createdAt,
                 updatedAt: user === null || user === void 0 ? void 0 : user.updatedAt,
             },
+            workspace: workspace,
         });
     }
     catch (error) {
