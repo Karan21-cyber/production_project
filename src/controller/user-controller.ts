@@ -38,6 +38,8 @@ const createUser = asyncHandler(async (req: Request, res: Response) => {
     },
   });
 
+  console.log(user);
+
   return res.status(201).json({
     success: true,
     message: "User created successfully",
