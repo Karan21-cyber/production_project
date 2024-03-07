@@ -69,7 +69,7 @@ const userLogin = asyncHandler(
 const userLogOut = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     try {
-      const { id } = req.params;
+      // const { id } = req.params;
 
       const user = await prisma.user.findUnique({
         where: {
