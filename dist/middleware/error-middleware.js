@@ -8,12 +8,12 @@ const errorMiddleware = (err, req, res) => {
     if (err instanceof http_exception_1.default) {
         return res.status(err.statusCode).json({
             success: false,
-            message: err.message
+            message: err.message,
         });
     }
     return res.status(500).json({
         success: false,
-        message: 'Internal server Error.'
+        message: "Internal server error",
     });
 };
 exports.default = errorMiddleware;
