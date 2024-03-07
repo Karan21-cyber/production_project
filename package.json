@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "precommit": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint --ext .ts --fix src",
     "build": "npm run lint && tsc",
@@ -14,6 +15,11 @@
     "dev:start": "nodemon src/index.ts",
     "db:push": "npx prisma db push",
     "db:pull": "npx prisma db pull"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run precommit"
+    }
   },
   "lint-staged": {
     "*.ts": [
