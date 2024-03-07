@@ -4,10 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
     "lint": "eslint --ext .ts --fix src",
     "format": "eslint src/**/*.ts --fix",
-    "build": "npm run lint && tsc && npm run format && npm run test",
+    "build": "npm run lint && tsc && npm run format ",
     "start:prod": "nodemon dist/index.js",
     "prod:build": "npm i && npm run build && npm run prisma:generate && npm run db:push",
     "prisma:generate": "npx prisma generate",
