@@ -168,8 +168,9 @@ export const mail_template = ({ name, id }: { name: string; id: string }) => {
                 height: 80px;
               "
             >
-              <div
-                onclick="window.location.href='https://pp-app-teal.vercel.app/verification/${id}'"
+              <a
+                href="https://pp-app-teal.vercel.app/verification/${id}"
+                target="_blank"
                 style="
                   cursor: pointer;
                   background-color: aqua;
@@ -185,7 +186,7 @@ export const mail_template = ({ name, id }: { name: string; id: string }) => {
                 "
               >
                 Verify
-              </div>
+              </a>
             </div>
             <p
               style="
