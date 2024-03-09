@@ -4,12 +4,11 @@ import prisma from "../prisma";
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { getUserByEmail, getUserDataById } from "../service/user-services";
-import nodemailer from "nodemailer";
 import asyncHandler from "../utils/async-handler";
 import HttpException from "../utils/http-exception";
 import { deleteImage } from "../service/delete-file";
 import { uploadImageFile } from "../service/upload-file";
-import { mail_template } from "../utils/mail-template";
+import sendMailVerification from "../service/send-mail-services";
 
 const createUser = asyncHandler(async (req: Request, res: Response) => {
   const reqBody = req.body;
@@ -33,12 +32,19 @@ const createUser = asyncHandler(async (req: Request, res: Response) => {
       phone: true,
       address: true,
       image: true,
+      verified: true,
       createdAt: true,
       updatedAt: true,
     },
   });
 
-  console.log(user);
+
+  // send email for verification
+  await sendMailVerification({
+    email: user?.email,
+    name: user?.fname + " " + user?.lname,
+    id: user?.id,
+  });
 
   return res.status(201).json({
     success: true,
@@ -101,6 +107,9 @@ const getUserById = asyncHandler(async (req: Request, res: Response) => {
 
 const getAllUser = asyncHandler(async (req: Request, res: Response) => {
   const users = await prisma.user.findMany({
+    where: {
+      verified: "verified",
+    },
     select: {
       id: true,
       fname: true,
@@ -109,6 +118,7 @@ const getAllUser = asyncHandler(async (req: Request, res: Response) => {
       phone: true,
       address: true,
       image: true,
+      verified: true,
       createdAt: true,
       updatedAt: true,
     },
@@ -140,6 +150,7 @@ const updateUser = asyncHandler(async (req: Request, res: Response) => {
       phone: true,
       address: true,
       image: true,
+      verified: true,
       createdAt: true,
       updatedAt: true,
     },
@@ -154,47 +165,15 @@ const updateUser = asyncHandler(async (req: Request, res: Response) => {
 
 const deleteUser = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const user = await prisma.user.delete({
+  await prisma.user.delete({
     where: {
       id: id,
     },
   });
+
   return res.status(200).json({
     success: true,
     message: "User deleted successfully",
-    data: user,
-  });
-});
-
-const sendNodemailer = asyncHandler(async (req: Request, res: Response) => {
-  const { name, email } = req.body;
-
-  if (!email) throw new HttpException(400, "Email is required");
-  if (!name) throw new HttpException(400, "Name is required");
-  const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: false,
-    service: "gmail",
-    auth: {
-      user: process.env.USER_MAIL as string,
-      pass: process.env.PASSWORD_MAIL as string,
-    },
-  });
-
-  const mailsend = await transporter.sendMail({
-    from: process.env.USER_MAIL as string,
-    to: `${email as string}`,
-    subject: "Testing mail from nodemailer",
-    text: `Hello ${name},\n\nThis is a test email sent from nodemailer.`,
-    html: mail_template(name),
-  });
-
-  if (!mailsend) throw new HttpException(500, "Error sending mail");
-
-  return res.status(200).json({
-    success: true,
-    message: "Mail sent successfully",
   });
 });
 
@@ -203,7 +182,6 @@ const userController = {
   uploadImage,
   getUserById,
   getAllUser,
-  sendNodemailer,
   updateUser,
   deleteUser,
 };

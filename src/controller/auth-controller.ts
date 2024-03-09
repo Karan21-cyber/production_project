@@ -41,6 +41,22 @@ const userLogin = asyncHandler(
         .json({ success: false, message: "Invalid credentials" });
     }
 
+    if (
+      user?.verified === "unverified" ||
+      user?.verified === "pending" ||
+      user?.verified === undefined
+    ) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User is not Verified." });
+    }
+
+    // if (user?.verified === "unverified") {
+    //   return res
+    //     .status(400)
+    //     .json({ success: false, message: "User is not Verified." });
+    // }
+
     const workspace = await prisma.workspace.findMany({
       where: {
         userId: user?.id,
@@ -48,6 +64,8 @@ const userLogin = asyncHandler(
       select: {
         id: true,
         name: true,
+        createdAt: true,
+        updatedAt: true,
       },
     });
 
@@ -171,6 +189,54 @@ const refreshLogin = asyncHandler(
   }
 );
 
-const authController = { userLogin, userLogOut, refreshLogin };
+const userVerification = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const findUser = await prisma.user.findUnique({
+    where: {
+      id: id,
+    },
+  });
+
+  if (!findUser) {
+    return res.status(400).json({
+      success: false,
+      message: "User not found",
+    });
+  }
+
+  const user = await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      verified: "verified",
+    },
+    select: {
+      id: true,
+      fname: true,
+      lname: true,
+      email: true,
+      phone: true,
+      verified: true,
+      address: true,
+      image: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+  return res.status(200).json({
+    success: true,
+    message: "User verified successfully",
+    data: user,
+  });
+});
+
+const authController = {
+  userLogin,
+  userLogOut,
+  refreshLogin,
+  userVerification,
+};
 
 export default authController;

@@ -22,6 +22,7 @@ export const getUserDataById = async (userId: string) => {
       phone: true,
       address: true,
       image: true,
+      verified: true,
       createdAt: true,
       updatedAt: true,
     },
