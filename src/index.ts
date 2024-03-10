@@ -12,11 +12,15 @@ import membersRouter from "./router/member-router";
 import { Server, Socket } from "socket.io";
 
 import cors from "cors";
-import { verifyAuthToken } from "./utils/auth-utils";
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:4550",
+    methods: ["GET", "POST"],
+  },
+});
 
 app.use(cors());
 app.use(express.json());
@@ -41,21 +45,17 @@ app.use(errorMiddleware);
 
 createSubscriptionProduct();
 
-io.use((socket: Socket, next) => {
-  const token = socket.handshake.auth.token;
-
-  // Verify the token using your authentication logic
-  if (verifyAuthToken(token)) {
-    return next();
-  }
-
-  // If the token is not valid, reject the connection
-  return next(new Error("Authentication failed"));
-});
-
 // Connection event with authenticated sockets
 io.on("connection", (socket: Socket) => {
-  console.log("socket connected.");
+  console.log("User Connected to (Server).");
+
+  //Emit a "message" event to the client
+  socket.on("message", (message) => {
+    console.log("Received From client: ", message);
+    io.emit("message", message);
+  });
+
+  socket.on("new message", (message) => console.log(message));
 
   // Your existing chat and disconnect event handlers
   socket.on("chat", (message) => {
@@ -64,15 +64,16 @@ io.on("connection", (socket: Socket) => {
   });
 
   socket.on("disconnect", function () {
-    console.log("user disconnected");
+    console.log("user disconnected from (server)");
   });
 });
 
+const PORT = 5500;
 prisma
   .$connect()
   .then(() => {
-    server.listen(5500, () => {
-      console.log("Server started on port 5500");
+    server.listen(PORT, () => {
+      console.log(`Server started on port ${PORT}`);
       console.log("socket is also running...");
     });
   })
