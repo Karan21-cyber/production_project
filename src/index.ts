@@ -9,9 +9,10 @@ import workspaceRouter from "./router/workspace-router";
 import foldersRouter from "./router/folder-router";
 import filesRouter from "./router/files-router";
 import membersRouter from "./router/member-router";
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 
 import cors from "cors";
+import { verifyAuthToken } from "./utils/auth-utils";
 
 const app = express();
 const server = http.createServer(app);
@@ -40,11 +41,26 @@ app.use(errorMiddleware);
 
 createSubscriptionProduct();
 
-io.on("connection", (socket) => {
-  console.log("user connected");
+io.use((socket: Socket, next) => {
+  const token = socket.handshake.auth.token;
 
+  // Verify the token using your authentication logic
+  if (verifyAuthToken(token)) {
+    return next();
+  }
+
+  // If the token is not valid, reject the connection
+  return next(new Error("Authentication failed"));
+});
+
+// Connection event with authenticated sockets
+io.on("connection", (socket: Socket) => {
+  console.log("socket connected.");
+
+  // Your existing chat and disconnect event handlers
   socket.on("chat", (message) => {
     console.log("From server: ", message);
+    io.emit("chat", message);
   });
 
   socket.on("disconnect", function () {
