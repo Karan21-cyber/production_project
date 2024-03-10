@@ -13,10 +13,7 @@ router.get(
   "/spaceworld/v1/members/:workspaceId",
   memberController.getmemberByWorkspaceId
 );
-router.post(
-  "/spaceworld/v1/members",
-  memberController.getMemberBySearch
-);
+router.post("/spaceworld/v1/members", memberController.getMemberBySearch);
 router.put("/spaceworld/v1/members/:id", memberController.updatemember);
 router.delete("/spaceworld/v1/members/:id", memberController.deletemember);
 router.get(
