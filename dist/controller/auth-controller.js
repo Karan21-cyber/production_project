@@ -22,11 +22,31 @@ const userLogin = (0, async_handler_1.default)((req, res) => __awaiter(void 0, v
     const reqBody = req.body;
     const email = reqBody === null || reqBody === void 0 ? void 0 : reqBody.email.trim().toLowerCase();
     const user = yield (0, user_services_1.getUserByEmail)(email);
-    if (!user)
-        throw new http_exception_1.default(400, "User not found");
+    // if (!user) throw new HttpException(400, "User not found");
+    if (!user) {
+        return res
+            .status(400)
+            .json({ success: false, message: "User not found" });
+    }
     const comparePassword = yield bcrypt_1.default.compare(reqBody === null || reqBody === void 0 ? void 0 : reqBody.password, user === null || user === void 0 ? void 0 : user.password);
-    if (!comparePassword)
-        throw new http_exception_1.default(400, "Invalid Credential.");
+    // if (!comparePassword) throw new HttpException(400, "Invalid credentials");
+    if (!comparePassword) {
+        return res
+            .status(400)
+            .json({ success: false, message: "Invalid credentials" });
+    }
+    if ((user === null || user === void 0 ? void 0 : user.verified) === "unverified" ||
+        (user === null || user === void 0 ? void 0 : user.verified) === "pending" ||
+        (user === null || user === void 0 ? void 0 : user.verified) === undefined) {
+        return res
+            .status(400)
+            .json({ success: false, message: "User is not Verified." });
+    }
+    // if (user?.verified === "unverified") {
+    //   return res
+    //     .status(400)
+    //     .json({ success: false, message: "User is not Verified." });
+    // }
     const workspace = yield prisma_1.default.workspace.findMany({
         where: {
             userId: user === null || user === void 0 ? void 0 : user.id,
@@ -34,6 +54,8 @@ const userLogin = (0, async_handler_1.default)((req, res) => __awaiter(void 0, v
         select: {
             id: true,
             name: true,
+            createdAt: true,
+            updatedAt: true,
         },
     });
     const token = yield (0, get_token_1.getAccessTokenAndRefereshToken)(user === null || user === void 0 ? void 0 : user.id);
@@ -41,7 +63,8 @@ const userLogin = (0, async_handler_1.default)((req, res) => __awaiter(void 0, v
         httpOnly: true,
         secure: true,
     };
-    return res.status(200)
+    return res
+        .status(200)
         .cookie("accessToken", token === null || token === void 0 ? void 0 : token.accessToken, options)
         .cookie("refreshToken", token === null || token === void 0 ? void 0 : token.refreshToken, options)
         .json({
@@ -129,5 +152,49 @@ const refreshLogin = (0, async_handler_1.default)((req, res) => __awaiter(void 0
         });
     }
 }));
-const authController = { userLogin, userLogOut, refreshLogin };
+const userVerification = (0, async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const findUser = yield prisma_1.default.user.findUnique({
+        where: {
+            id: id,
+        },
+    });
+    if (!findUser) {
+        return res.status(400).json({
+            success: false,
+            message: "User not found",
+        });
+    }
+    const user = yield prisma_1.default.user.update({
+        where: {
+            id: id,
+        },
+        data: {
+            verified: "verified",
+        },
+        select: {
+            id: true,
+            fname: true,
+            lname: true,
+            email: true,
+            phone: true,
+            verified: true,
+            address: true,
+            image: true,
+            createdAt: true,
+            updatedAt: true,
+        },
+    });
+    return res.status(200).json({
+        success: true,
+        message: "User verified successfully",
+        data: user,
+    });
+}));
+const authController = {
+    userLogin,
+    userLogOut,
+    refreshLogin,
+    userVerification,
+};
 exports.default = authController;

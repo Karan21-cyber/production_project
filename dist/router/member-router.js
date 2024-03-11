@@ -9,7 +9,7 @@ const router = (0, express_1.Router)();
 router.post("/spaceworld/v1/members/:workspaceId", member_controller_1.default.createmember);
 router.get("/spaceworld/v1/members", member_controller_1.default.getAllmember);
 router.get("/spaceworld/v1/members/:workspaceId", member_controller_1.default.getmemberByWorkspaceId);
-router.get("/spaceworld/v1/members/search", member_controller_1.default.getMemberBySearch);
+router.post("/spaceworld/v1/members", member_controller_1.default.getMemberBySearch);
 router.put("/spaceworld/v1/members/:id", member_controller_1.default.updatemember);
 router.delete("/spaceworld/v1/members/:id", member_controller_1.default.deletemember);
 router.get("/spaceworld/v1/members/:folderId", member_controller_1.default.getMemberByFolderId);

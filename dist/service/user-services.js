@@ -36,6 +36,7 @@ const getUserDataById = (userId) => __awaiter(void 0, void 0, void 0, function* 
             phone: true,
             address: true,
             image: true,
+            verified: true,
             createdAt: true,
             updatedAt: true,
         },

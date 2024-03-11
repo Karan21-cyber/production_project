@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const http_exception_1 = __importDefault(require("../utils/http-exception"));
 const errorMiddleware = (err, req, res) => {
     if (err instanceof http_exception_1.default) {
+        console.log("Consolasdf", err);
         return res.status(err.statusCode).json({
             success: false,
             message: err.message,

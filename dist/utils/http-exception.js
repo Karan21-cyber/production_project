@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class HttpException extends Error {
     constructor(status, message) {
         super(message);
-        this.message = message;
         this.statusCode = status;
+        this.message = message;
     }
 }
 exports.default = HttpException;

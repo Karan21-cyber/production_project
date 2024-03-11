@@ -16,12 +16,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const prisma_1 = __importDefault(require("../prisma"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const user_services_1 = require("../service/user-services");
-const nodemailer_1 = __importDefault(require("nodemailer"));
 const async_handler_1 = __importDefault(require("../utils/async-handler"));
 const http_exception_1 = __importDefault(require("../utils/http-exception"));
 const delete_file_1 = require("../service/delete-file");
 const upload_file_1 = require("../service/upload-file");
-const mail_template_1 = require("../utils/mail-template");
+const send_mail_services_1 = __importDefault(require("../service/send-mail-services"));
 const createUser = (0, async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const reqBody = req.body;
     const email = reqBody.email.trim().toLowerCase();
@@ -40,11 +39,17 @@ const createUser = (0, async_handler_1.default)((req, res) => __awaiter(void 0, 
             phone: true,
             address: true,
             image: true,
+            verified: true,
             createdAt: true,
             updatedAt: true,
         },
     });
-    console.log(user);
+    // send email for verification
+    yield (0, send_mail_services_1.default)({
+        email: user === null || user === void 0 ? void 0 : user.email,
+        name: (user === null || user === void 0 ? void 0 : user.fname) + " " + (user === null || user === void 0 ? void 0 : user.lname),
+        id: user === null || user === void 0 ? void 0 : user.id,
+    });
     return res.status(201).json({
         success: true,
         message: "User created successfully",
@@ -94,6 +99,9 @@ const getUserById = (0, async_handler_1.default)((req, res) => __awaiter(void 0,
 }));
 const getAllUser = (0, async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const users = yield prisma_1.default.user.findMany({
+        where: {
+            verified: "verified",
+        },
         select: {
             id: true,
             fname: true,
@@ -102,6 +110,7 @@ const getAllUser = (0, async_handler_1.default)((req, res) => __awaiter(void 0, 
             phone: true,
             address: true,
             image: true,
+            verified: true,
             createdAt: true,
             updatedAt: true,
         },
@@ -128,6 +137,7 @@ const updateUser = (0, async_handler_1.default)((req, res) => __awaiter(void 0, 
             phone: true,
             address: true,
             image: true,
+            verified: true,
             createdAt: true,
             updatedAt: true,
         },
@@ -140,7 +150,7 @@ const updateUser = (0, async_handler_1.default)((req, res) => __awaiter(void 0, 
 }));
 const deleteUser = (0, async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const user = yield prisma_1.default.user.delete({
+    yield prisma_1.default.user.delete({
         where: {
             id: id,
         },
@@ -148,37 +158,6 @@ const deleteUser = (0, async_handler_1.default)((req, res) => __awaiter(void 0, 
     return res.status(200).json({
         success: true,
         message: "User deleted successfully",
-        data: user,
-    });
-}));
-const sendNodemailer = (0, async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, email } = req.body;
-    if (!email)
-        throw new http_exception_1.default(400, "Email is required");
-    if (!name)
-        throw new http_exception_1.default(400, "Name is required");
-    const transporter = nodemailer_1.default.createTransport({
-        host: "smtp.gmail.com",
-        port: 465,
-        secure: false,
-        service: "gmail",
-        auth: {
-            user: process.env.USER_MAIL,
-            pass: process.env.PASSWORD_MAIL,
-        },
-    });
-    const mailsend = yield transporter.sendMail({
-        from: process.env.USER_MAIL,
-        to: `${email}`,
-        subject: "Testing mail from nodemailer",
-        text: `Hello ${name},\n\nThis is a test email sent from nodemailer.`,
-        html: (0, mail_template_1.mail_template)(name),
-    });
-    if (!mailsend)
-        throw new http_exception_1.default(500, "Error sending mail");
-    return res.status(200).json({
-        success: true,
-        message: "Mail sent successfully",
     });
 }));
 const userController = {
@@ -186,7 +165,6 @@ const userController = {
     uploadImage,
     getUserById,
     getAllUser,
-    sendNodemailer,
     updateUser,
     deleteUser,
 };

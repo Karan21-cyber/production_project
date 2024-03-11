@@ -142,7 +142,7 @@ const getMemberByFolderId = (0, async_handler_1.default)((req, res) => __awaiter
 }));
 const getMemberBySearch = (0, async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const querySearch = req.query;
-    const searchString = querySearch.search;
+    const searchString = querySearch.q;
     if (!searchString) {
         return res.status(400).json({
             success: false,
@@ -151,19 +151,26 @@ const getMemberBySearch = (0, async_handler_1.default)((req, res) => __awaiter(v
     }
     const members = yield prisma_1.default.user.findMany({
         where: {
-            fname: {
-                contains: searchString,
-            },
-            lname: {
-                contains: searchString,
-            },
+            OR: [
+                {
+                    fname: {
+                        contains: searchString,
+                        mode: "insensitive",
+                        // Make the search case-insensitive
+                    },
+                },
+                {
+                    lname: {
+                        contains: searchString,
+                        mode: "insensitive",
+                    },
+                },
+            ],
         },
         select: {
             id: true,
             fname: true,
             lname: true,
-            email: true,
-            phone: true,
             address: true,
             image: true,
             createdAt: true,
