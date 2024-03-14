@@ -80,10 +80,23 @@ const getmemberByWorkspaceId = asyncHandler(
 
     if (!member) throw new HttpException(400, "member not found");
 
+    const chat = await prisma.chat.findMany({
+      where: {
+        groupAdmin: member[0].id,
+      },
+      select: {
+        id: true,
+        groupAdmin: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
     return res.status(200).json({
       success: true,
       message: "member fetched successfully",
       data: member,
+      chat: chat,
     });
   }
 );
