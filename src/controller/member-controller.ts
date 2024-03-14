@@ -68,6 +68,20 @@ const getmemberByWorkspaceId = asyncHandler(
             phone: true,
             address: true,
             image: true,
+            chats: {
+              where: {
+                user: {
+                  id: id,
+                },
+              },
+              select: {
+                id: true,
+                groupAdmin: true,
+                latestMessage: true,
+                createdAt: true,
+                updatedAt: true,
+              },
+            },
             createdAt: true,
             updatedAt: true,
           },
@@ -82,16 +96,17 @@ const getmemberByWorkspaceId = asyncHandler(
 
     const chat = await prisma.chat.findMany({
       where: {
-        groupAdmin: member[0].id,
+        groupAdmin: id,
       },
       select: {
         id: true,
         groupAdmin: true,
+        latestMessage: true,
         createdAt: true,
         updatedAt: true,
       },
     });
-
+    
     return res.status(200).json({
       success: true,
       message: "member fetched successfully",

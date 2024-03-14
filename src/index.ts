@@ -12,6 +12,7 @@ import membersRouter from "./router/member-router";
 import { Server, Socket } from "socket.io";
 
 import cors from "cors";
+import chatssRouter from "./router/chat-router";
 
 const app = express();
 const server = http.createServer(app);
@@ -39,7 +40,8 @@ app.use(
   workspaceRouter,
   foldersRouter,
   filesRouter,
-  membersRouter
+  membersRouter,
+  chatssRouter
 );
 app.use(errorMiddleware);
 
