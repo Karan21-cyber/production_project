@@ -30,6 +30,15 @@ exports.createWorkspace = (0, async_handler_1.default)((req, res) => __awaiter(v
             updatedAt: true,
         },
     });
+    const member = yield prisma_1.default.members.create({
+        data: {
+            workspaceId: workspaceCreate.id,
+            userId: workspaceCreate.userId,
+        },
+    });
+    if (member) {
+        console.log("member created successfully.");
+    }
     return res.status(201).json({
         success: true,
         message: "Workspace created successfully",

@@ -18,8 +18,10 @@ const async_handler_1 = __importDefault(require("../utils/async-handler"));
 const http_exception_1 = __importDefault(require("../utils/http-exception"));
 exports.createmember = (0, async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const reqBody = req.body;
+    const senderId = reqBody.senderId;
+    const workId = req.params.workspaceId;
     const memberCreate = yield prisma_1.default.members.create({
-        data: { workspaceId: reqBody.workspaceId, user: reqBody.userId },
+        data: { workspaceId: workId, userId: reqBody.userId },
         select: {
             id: true,
             user: {
@@ -40,6 +42,14 @@ exports.createmember = (0, async_handler_1.default)((req, res) => __awaiter(void
             updatedAt: true,
         },
     });
+    const chats = yield prisma_1.default.chat.create({
+        data: {
+            groupAdmin: senderId,
+        },
+    });
+    if (chats) {
+        console.log("chats created successfully");
+    }
     return res.status(201).json({
         success: true,
         message: "member created successfully",

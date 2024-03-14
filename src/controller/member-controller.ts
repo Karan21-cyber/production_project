@@ -6,9 +6,11 @@ import HttpException from "../utils/http-exception";
 export const createmember = asyncHandler(
   async (req: Request, res: Response) => {
     const reqBody = req.body;
+    const senderId = reqBody.senderId;
+    const workId = req.params.workspaceId;
 
     const memberCreate = await prisma.members.create({
-      data: { workspaceId: reqBody.workspaceId, user: reqBody.userId },
+      data: { workspaceId: workId, userId: reqBody.userId },
       select: {
         id: true,
         user: {
@@ -29,6 +31,16 @@ export const createmember = asyncHandler(
         updatedAt: true,
       },
     });
+
+    const chats = await prisma.chat.create({
+      data: {
+        groupAdmin: senderId,
+      },
+    });
+
+    if (chats) {
+      console.log("chats created successfully");
+    }
 
     return res.status(201).json({
       success: true,

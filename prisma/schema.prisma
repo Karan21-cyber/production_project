@@ -31,19 +31,20 @@ model User {
 model Workspace {
   id        String    @id @default(uuid())
   name      String
-  userId    String // Changed to String as it references the id of User model
+  userId    String
   user      User      @relation(fields: [userId], references: [id])
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   folders   Folder[]
-  member    Members[]
+  members   Members[]
 }
 
 model Members {
   id          String    @id @default(uuid())
   workspaceId String
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
-  user        User[]
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
@@ -51,19 +52,19 @@ model Members {
 model Folder {
   id          String    @id @default(uuid())
   name        String
-  workspaceId String // Changed to String as it references the id of Workspace model
+  workspaceId String
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   chat        Chat[]
-  files       File[] // Added opposite relation field
+  files       File[]
   team        Team[]
 }
 
 model Team {
   id        String   @id @default(uuid())
   name      String
-  folderId  String // Changed to String as it references the id of Workspace model
+  folderId  String
   folder    Folder   @relation(fields: [folderId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -74,7 +75,7 @@ model File {
   id        String   @id @default(uuid())
   name      String
   content   String?
-  folderId  String // Changed to String as it references the id of Folder model
+  folderId  String
   folder    Folder   @relation(fields: [folderId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -82,10 +83,10 @@ model File {
 
 model Chat {
   id            String    @id @default(uuid())
-  chatName      String
   isGroupChat   Boolean   @default(false)
   groupAdmin    String
-  latestMessage String
+  latestMessage String?
+  verified      Boolean  @default(false)
   user          User      @relation(fields: [groupAdmin], references: [id])
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -97,9 +98,9 @@ model Message {
   id        String   @id @default(uuid())
   sender    String
   receiver  String
-  chat      String
+  chatId    String
   message   String
-  chatRoom  Chat     @relation(fields: [chat], references: [id])
+  chatRoom  Chat     @relation(fields: [chatId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
