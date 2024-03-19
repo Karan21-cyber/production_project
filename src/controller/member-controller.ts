@@ -5,8 +5,9 @@ import HttpException from "../utils/http-exception";
 
 export const createmember = asyncHandler(
   async (req: Request, res: Response) => {
+
     const reqBody = req.body;
-    const senderId = reqBody.senderId;
+    const userId = reqBody.userId;
     const workId = req.params.workspaceId;
 
     const memberCreate = await prisma.members.create({
@@ -34,7 +35,8 @@ export const createmember = asyncHandler(
 
     const chats = await prisma.chat.create({
       data: {
-        groupAdmin: senderId,
+        chatName: memberCreate?.user?.fname + " " + memberCreate?.user?.lname,
+        groupAdmin: userId,
       },
     });
 
@@ -52,13 +54,12 @@ export const createmember = asyncHandler(
 
 const getmemberByWorkspaceId = asyncHandler(
   async (req: Request, res: Response) => {
-    const { id } = req.params;
+    const { workspaceId } = req.params;
     const member = await prisma.members.findMany({
       where: {
-        workspaceId: id,
+        workspaceId: workspaceId,
       },
-      select: {
-        id: true,
+      include: {
         user: {
           select: {
             id: true,
@@ -69,49 +70,24 @@ const getmemberByWorkspaceId = asyncHandler(
             address: true,
             image: true,
             chats: {
-              where: {
-                user: {
-                  id: id,
-                },
-              },
               select: {
                 id: true,
-                groupAdmin: true,
-                latestMessage: true,
-                createdAt: true,
-                updatedAt: true,
+                chatName: true,
               },
             },
             createdAt: true,
             updatedAt: true,
           },
         },
-        workspaceId: true,
-        createdAt: true,
-        updatedAt: true,
       },
     });
 
     if (!member) throw new HttpException(400, "member not found");
 
-    const chat = await prisma.chat.findMany({
-      where: {
-        groupAdmin: id,
-      },
-      select: {
-        id: true,
-        groupAdmin: true,
-        latestMessage: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
-    
     return res.status(200).json({
       success: true,
       message: "member fetched successfully",
       data: member,
-      chat: chat,
     });
   }
 );

@@ -25,7 +25,6 @@ model User {
   workspaces   Workspace[]
   chats        Chat[]
   members      Members[]
-  team         Team[]
 }
 
 model Workspace {
@@ -47,7 +46,6 @@ model Members {
   user        User      @relation(fields: [userId], references: [id])
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  
 }
 
 model Folder {
@@ -57,19 +55,8 @@ model Folder {
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  chat        Chat[]
   files       File[]
-  team        Team[]
-}
-
-model Team {
-  id        String   @id @default(uuid())
-  name      String
-  folderId  String
-  folder    Folder   @relation(fields: [folderId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User[]
+  chat        Chat[]
 }
 
 model File {
@@ -85,14 +72,16 @@ model File {
 model Chat {
   id            String    @id @default(uuid())
   isGroupChat   Boolean   @default(false)
+  chatName      String
   groupAdmin    String
   latestMessage String?
-  verified      Boolean  @default(false)
-  user          User      @relation(fields: [groupAdmin], references: [id])
+  verified      Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   messages      Message[]
-  folder        Folder[]
+  user          User[]
+  Folder        Folder?   @relation(fields: [folderId], references: [id])
+  folderId      String?
 }
 
 model Message {

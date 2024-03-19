@@ -7,6 +7,7 @@ const createChat = asyncHandler(async (req: Request, res: Response) => {
 
   const chats = await prisma.chat.create({
     data: {
+      chatName: reqBody?.chatName,
       groupAdmin: reqBody?.senderId,
     },
   });

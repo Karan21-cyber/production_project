@@ -10,14 +10,14 @@ router.post(
 
 router.get("/spaceworld/v1/members", memberController.getAllmember);
 router.get(
-  "/spaceworld/v1/members/:workspaceId",
+  "/spaceworld/v1/members/workpaces/:workspaceId",
   memberController.getmemberByWorkspaceId
 );
 router.post("/spaceworld/v1/members", memberController.getMemberBySearch);
 router.put("/spaceworld/v1/members/:id", memberController.updatemember);
 router.delete("/spaceworld/v1/members/:id", memberController.deletemember);
 router.get(
-  "/spaceworld/v1/members/:folderId",
+  "/spaceworld/v1/members/folders/:folderId",
   memberController.getMemberByFolderId
 );
 

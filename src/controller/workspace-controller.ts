@@ -9,6 +9,19 @@ export const createWorkspace = asyncHandler(
     const reqParams = req.params;
     const workspace = reqBody.name.trim().toLowerCase();
 
+    const workspaceExist = await prisma.workspace.findFirst({
+      where: {
+        userId: reqParams.userId,
+      },
+    });
+
+    if (workspaceExist) {
+      return res.status(201).json({
+        success: false,
+        message: "Workspace already exist",
+      });
+    }
+
     const workspaceCreate = await prisma.workspace.create({
       data: { name: workspace, userId: reqParams.userId },
       select: {
@@ -112,25 +125,17 @@ const getAllWorkspace = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const deleteWorkspace = asyncHandler(async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const workId = req.params;
 
-  const workspace = await prisma.workspace.delete({
+  await prisma.workspace.delete({
     where: {
-      id,
-    },
-    select: {
-      id: true,
-      name: true,
-      userId: true,
-      createdAt: true,
-      updatedAt: true,
+      id: workId.id,
     },
   });
 
   return res.status(200).json({
     success: true,
-    message: "Workspace fetched successfully",
-    data: workspace,
+    message: "Workspace deleted successfully",
   });
 });
 
