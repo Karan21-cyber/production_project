@@ -7,10 +7,24 @@ export const createfolder = asyncHandler(
   async (req: Request, res: Response) => {
     const reqBody = req.body;
     const reqParams = req.params;
-    const folder = reqBody.name.trim().toLowerCase();
+    const folderName = reqBody.name.trim().toLowerCase();
+
+    const folderExist = await prisma.folder.findFirst({
+      where: {
+        workspaceId: reqParams.workspaceId,
+        name: folderName,
+      },
+    });
+
+    if (folderExist) {
+      return res.status(201).json({
+        success: false,
+        message: "folder already exist",
+      });
+    }
 
     const folderCreate = await prisma.folder.create({
-      data: { name: folder, workspaceId: reqParams.workspaceId },
+      data: { name: folderName, workspaceId: reqParams.workspaceId },
       select: {
         id: true,
         name: true,

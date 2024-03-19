@@ -23,40 +23,50 @@ model User {
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
   workspaces   Workspace[]
-  chats        Chat[]
-  members      Members[]
+  FolderChat   FolderChat? @relation(fields: [folderChatId], references: [id])
+  folderChatId String?
 }
 
 model Workspace {
-  id        String    @id @default(uuid())
+  id        String   @id @default(uuid())
   name      String
   userId    String
-  user      User      @relation(fields: [userId], references: [id])
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   folders   Folder[]
-  members   Members[]
-}
-
-model Members {
-  id          String    @id @default(uuid())
-  workspaceId String
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
-  userId      String
-  user        User      @relation(fields: [userId], references: [id])
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  users     User[]
 }
 
 model Folder {
-  id          String    @id @default(uuid())
+  id          String       @id @default(uuid())
   name        String
   workspaceId String
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  workspace   Workspace    @relation(fields: [workspaceId], references: [id])
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
   files       File[]
-  chat        Chat[]
+  FolderChat  FolderChat[]
+}
+
+model FolderChat {
+  id            String          @id @default(uuid())
+  name          String
+  folderId      String
+  folder        Folder          @relation(fields: [folderId], references: [id])
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  user          User[]
+  FolderMessage FolderMessage[]
+}
+
+model FolderMessage {
+  id           String     @id @default(uuid())
+  from         String
+  to           String
+  folderChatId String
+  folderChat   FolderChat @relation(fields: [folderChatId], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 }
 
 model File {
@@ -71,26 +81,20 @@ model File {
 
 model Chat {
   id            String    @id @default(uuid())
-  isGroupChat   Boolean   @default(false)
   chatName      String
-  groupAdmin    String
+  from          String
+  to            String
   latestMessage String?
-  verified      Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   messages      Message[]
-  user          User[]
-  Folder        Folder?   @relation(fields: [folderId], references: [id])
-  folderId      String?
 }
 
 model Message {
   id        String   @id @default(uuid())
-  sender    String
-  receiver  String
-  chatId    String
-  message   String
-  chatRoom  Chat     @relation(fields: [chatId], references: [id])
+  content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  chatId    String
+  chat      Chat     @relation(fields: [chatId], references: [id])
 }

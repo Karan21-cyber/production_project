@@ -8,7 +8,6 @@ import userRouter from "./router/user-router";
 import workspaceRouter from "./router/workspace-router";
 import foldersRouter from "./router/folder-router";
 import filesRouter from "./router/files-router";
-import membersRouter from "./router/member-router";
 import { Server, Socket } from "socket.io";
 
 import cors from "cors";
@@ -40,7 +39,6 @@ app.use(
   workspaceRouter,
   foldersRouter,
   filesRouter,
-  membersRouter,
   chatssRouter
 );
 app.use(errorMiddleware);

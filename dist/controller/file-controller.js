@@ -19,9 +19,21 @@ const http_exception_1 = __importDefault(require("../utils/http-exception"));
 exports.createfile = (0, async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const reqBody = req.body;
     const reqParams = req.params;
-    const file = reqBody.name.trim().toLowerCase();
+    const fileName = reqBody.name.trim().toLowerCase();
+    const fileExist = yield prisma_1.default.file.findFirst({
+        where: {
+            folderId: reqParams.folderId,
+            name: fileName,
+        },
+    });
+    if (fileExist) {
+        return res.status(201).json({
+            success: false,
+            message: "File already exist",
+        });
+    }
     const fileCreate = yield prisma_1.default.file.create({
-        data: { name: file, folderId: reqParams.folderId },
+        data: { name: fileName, folderId: reqParams.folderId },
         select: {
             id: true,
             name: true,

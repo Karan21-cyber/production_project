@@ -6,10 +6,24 @@ import HttpException from "../utils/http-exception";
 export const createfile = asyncHandler(async (req: Request, res: Response) => {
   const reqBody = req.body;
   const reqParams = req.params;
-  const file = reqBody.name.trim().toLowerCase();
+  const fileName = reqBody.name.trim().toLowerCase();
+
+  const fileExist = await prisma.file.findFirst({
+    where: {
+      folderId: reqParams.folderId,
+      name: fileName,
+    },
+  });
+
+  if (fileExist) {
+    return res.status(201).json({
+      success: false,
+      message: "File already exist",
+    });
+  }
 
   const fileCreate = await prisma.file.create({
-    data: { name: file, folderId: reqParams.folderId },
+    data: { name: fileName, folderId: reqParams.folderId },
     select: {
       id: true,
       name: true,

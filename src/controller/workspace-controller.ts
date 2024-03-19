@@ -33,16 +33,16 @@ export const createWorkspace = asyncHandler(
       },
     });
 
-    const member = await prisma.members.create({
-      data: {
-        workspaceId: workspaceCreate.id,
-        userId: workspaceCreate.userId,
-      },
-    });
+    // const member = await prisma.members.create({
+    //   data: {
+    //     workspaceId: workspaceCreate.id,
+    //     userId: workspaceCreate.userId,
+    //   },
+    // });
 
-    if (member) {
-      console.log("member created successfully.");
-    }
+    // if (member) {
+    //   console.log("member created successfully.");
+    // }
 
     return res.status(201).json({
       success: true,
