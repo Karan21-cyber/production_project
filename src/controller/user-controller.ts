@@ -38,7 +38,6 @@ const createUser = asyncHandler(async (req: Request, res: Response) => {
     },
   });
 
-
   // send email for verification
   await sendMailVerification({
     email: user?.email,
@@ -177,6 +176,49 @@ const deleteUser = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const getUserBySearch = asyncHandler(async (req: Request, res: Response) => {
+  const querySearch = req.query;
+  const searchString = querySearch.search as string;
+
+  if (!searchString) {
+    return res.status(400).json({
+      success: false,
+      message: "Missing search parameter",
+    });
+  }
+
+  const users = await prisma.user.findMany({
+    where: {
+      fname: {
+        contains: searchString,
+      },
+      lname: {
+        contains: searchString,
+      },
+      email: {
+        contains: searchString,
+      },
+    },
+    select: {
+      id: true,
+      fname: true,
+      lname: true,
+      email: true,
+      phone: true,
+      address: true,
+      image: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+
+  return res.status(200).json({
+    success: true,
+    message: "User fetched successfully",
+    data: users,
+  });
+});
+
 const userController = {
   createUser,
   uploadImage,
@@ -184,6 +226,7 @@ const userController = {
   getAllUser,
   updateUser,
   deleteUser,
+  getUserBySearch,
 };
 
 export default userController;

@@ -22,7 +22,6 @@ const user_router_1 = __importDefault(require("./router/user-router"));
 const workspace_router_1 = __importDefault(require("./router/workspace-router"));
 const folder_router_1 = __importDefault(require("./router/folder-router"));
 const files_router_1 = __importDefault(require("./router/files-router"));
-const member_router_1 = __importDefault(require("./router/member-router"));
 const socket_io_1 = require("socket.io");
 const cors_1 = __importDefault(require("cors"));
 const chat_router_1 = __importDefault(require("./router/chat-router"));
@@ -43,7 +42,7 @@ app.get("/", (req, res) => {
         message: "Welcome to Production Project Server...",
     });
 });
-app.use(auth_router_1.default, user_router_1.default, workspace_router_1.default, folder_router_1.default, files_router_1.default, member_router_1.default, chat_router_1.default);
+app.use(auth_router_1.default, user_router_1.default, workspace_router_1.default, folder_router_1.default, files_router_1.default, chat_router_1.default);
 app.use(error_middleware_1.default);
 (0, payment_sevices_1.default)();
 // Connection event with authenticated sockets

@@ -15,20 +15,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const prisma_1 = __importDefault(require("../prisma"));
 const async_handler_1 = __importDefault(require("../utils/async-handler"));
 const createChat = (0, async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const reqBody = req.body;
-    const chats = yield prisma_1.default.chat.create({
-        data: {
-            chatName: reqBody === null || reqBody === void 0 ? void 0 : reqBody.chatName,
-            groupAdmin: reqBody === null || reqBody === void 0 ? void 0 : reqBody.senderId,
-        },
-    });
-    if (chats) {
-        console.log("chats created successfully");
-    }
+    // const reqBody = req.body;
+    // const chats = await prisma.chat.create({
+    //   data: {
+    //     chatName: reqBody?.chatName,
+    //   },
+    // });
+    // if (chats) {
+    //   console.log("chats created successfully");
+    // }
     return res.status(201).json({
         success: true,
         message: "member created successfully",
-        data: chats,
+        // data: chats,
     });
 }));
 const getChatById = (0, async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -37,27 +36,25 @@ const getChatById = (0, async_handler_1.default)((req, res) => __awaiter(void 0,
         where: {
             id: id,
         },
-        select: {
-            id: true,
-            isGroupChat: true,
-            groupAdmin: true,
-            user: {
-                select: {
-                    id: true,
-                    fname: true,
-                    lname: true,
-                    email: true,
-                    phone: true,
-                    address: true,
-                    image: true,
-                    createdAt: true,
-                    updatedAt: true,
-                },
-            },
-            latestMessage: true,
-            createdAt: true,
-            updatedAt: true,
-        },
+        // select: {
+        //   id: true,
+        //   user: {
+        //     select: {
+        //       id: true,
+        //       fname: true,
+        //       lname: true,
+        //       email: true,
+        //       phone: true,
+        //       address: true,
+        //       image: true,
+        //       createdAt: true,
+        //       updatedAt: true,
+        //     },
+        //   },
+        //   latestMessage: true,
+        //   createdAt: true,
+        //   updatedAt: true,
+        // },
     });
     return res.status(200).json({
         success: true,
