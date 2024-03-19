@@ -160,6 +160,45 @@ const deleteUser = (0, async_handler_1.default)((req, res) => __awaiter(void 0, 
         message: "User deleted successfully",
     });
 }));
+const getUserBySearch = (0, async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const querySearch = req.query;
+    const searchString = querySearch.search;
+    if (!searchString) {
+        return res.status(400).json({
+            success: false,
+            message: "Missing search parameter",
+        });
+    }
+    const users = yield prisma_1.default.user.findMany({
+        where: {
+            fname: {
+                contains: searchString,
+            },
+            lname: {
+                contains: searchString,
+            },
+            email: {
+                contains: searchString,
+            },
+        },
+        select: {
+            id: true,
+            fname: true,
+            lname: true,
+            email: true,
+            phone: true,
+            address: true,
+            image: true,
+            createdAt: true,
+            updatedAt: true,
+        },
+    });
+    return res.status(200).json({
+        success: true,
+        message: "User fetched successfully",
+        data: users,
+    });
+}));
 const userController = {
     createUser,
     uploadImage,
@@ -167,5 +206,6 @@ const userController = {
     getAllUser,
     updateUser,
     deleteUser,
+    getUserBySearch,
 };
 exports.default = userController;

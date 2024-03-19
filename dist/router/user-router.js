@@ -14,5 +14,6 @@ router.get("/spaceworld/v1/user/:id", user_controller_1.default.getUserById);
 router.put("/spaceworld/v1/user/:id", user_controller_1.default.updateUser);
 router.delete("/spaceworld/v1/user/:id", user_controller_1.default.deleteUser);
 router.put("/spaceworld/v1/user/:id/image", user_controller_1.default.uploadImage);
+router.post("/spaceworld/v1/user", user_controller_1.default.getUserBySearch);
 const userRouter = router;
 exports.default = userRouter;
