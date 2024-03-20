@@ -42,17 +42,47 @@ io.on("connection", (socket: Socket) => {
   console.log("User Connected to (Server).");
 
   //Emit a "message" event to the client
-  socket.on("message", (message) => {
-    console.log("Received From client: ", message);
-    io.emit("message", message);
-  });
-
-  socket.on("new message", (message) => console.log(message));
+  // socket.on("message", (message) => {
+  //   console.log("Received From client: ", message);
+  //   io.emit("message", message);
+  // });
 
   // Your existing chat and disconnect event handlers
-  socket.on("chat", (message) => {
-    console.log("From server: ", message);
-    io.emit("chat", message);
+  // socket.on("chat", (args1) => {
+  //   console.log("From server: ", args1);
+  //   console.log("Received From client: ", args1);
+  //   io.emit("chat", args1);
+  // io.emit("chat", );
+  // });
+
+  // Emit a "setup" event to the client
+  socket.on("setup", (user) => {
+    socket.join(user._id);
+    socket.emit("connected");
+  });
+
+  socket.on("join chat", (room) => {
+    socket.join(room);
+    console.log("User Joined Room: " + room);
+  });
+
+  socket.on("typing", (room) => socket.in(room).emit("typing"));
+  socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
+
+  socket.on("new message", (newMessageReceived) => {
+    const chat = newMessageReceived.chat;
+
+    if (!chat.users) {
+      console.log("chat.users not defined");
+      return;
+    }
+
+    chat.user.forEach((user: { _id: string | string[] }) => {
+      if (user._id === newMessageReceived.sender._id) {
+        return;
+      }
+      socket.in(user._id).emit("message received", newMessageReceived);
+    });
   });
 
   socket.on("disconnect", function () {

@@ -128,12 +128,58 @@ const deleteWorkspace = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const addUserInWorkspace = asyncHandler(async (req: Request, res: Response) => {
+  const { workspaceId } = req.params;
+  const { userId } = req.body;
+
+  const workspace = await prisma.workspace.update({
+    where: {
+      id: workspaceId,
+    },
+    data: {
+      users: {
+        connect: {
+          id: userId,
+        },
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+      userId: true,
+      createdAt: true,
+      updatedAt: true,
+      users: {
+        select: {
+          id: true,
+          fname: true,
+          lname: true,
+          email: true,
+          phone: true,
+          verified: true,
+          address: true,
+          image: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      },
+    },
+  });
+
+  return res.status(200).json({
+    success: true,
+    message: "User added successfully",
+    data: workspace,
+  });
+});
+
 const workspaceController = {
   createWorkspace,
   getWorkspaceByUserId,
   updateWorkspace,
   deleteWorkspace,
   getAllWorkspace,
+  addUserInWorkspace,
 };
 
 export default workspaceController;

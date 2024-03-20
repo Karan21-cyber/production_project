@@ -8,6 +8,11 @@ router.post(
   workspaceController.createWorkspace
 );
 
+router.post(
+  "/spaceworld/v1/workspace/addUser/:workspaceId",
+  workspaceController.addUserInWorkspace
+);
+
 router.get("/spaceworld/v1/workspace", workspaceController.getAllWorkspace);
 
 router.get(

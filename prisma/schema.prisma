@@ -25,6 +25,8 @@ model User {
   workspaces   Workspace[]
   FolderChat   FolderChat? @relation(fields: [folderChatId], references: [id])
   folderChatId String?
+  Chat         Chat?       @relation(fields: [chatId], references: [id])
+  chatId       String?
 }
 
 model Workspace {
@@ -82,21 +84,24 @@ model File {
 }
 
 model Chat {
-  id            String    @id @default(uuid())
+  id            String     @id @default(uuid())
   chatName      String
-  from          String
-  to            String
-  latestMessage String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  messages      Message[]
+  isGroupChat   Boolean    @default(false)
+  latestMessage String
+  groupAdmin    String
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  users         User[]
+  Messaage      Messaage[]
 }
 
-model Message {
+model Messaage {
   id        String   @id @default(uuid())
+  sender    String
   content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  readby    String
   chatId    String
   chat      Chat     @relation(fields: [chatId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
