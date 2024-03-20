@@ -55,18 +55,20 @@ model FolderChat {
   folder        Folder          @relation(fields: [folderId], references: [id])
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
-  user          User[]
+  users         User[]
   FolderMessage FolderMessage[]
 }
 
 model FolderMessage {
-  id           String     @id @default(uuid())
-  from         String
-  to           String
-  folderChatId String
-  folderChat   FolderChat @relation(fields: [folderChatId], references: [id])
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  id            String     @id @default(uuid())
+  from          String
+  to            String
+  message       String
+  latestMessage String
+  folderChatId  String
+  folderChat    FolderChat @relation(fields: [folderChatId], references: [id])
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
 }
 
 model File {
