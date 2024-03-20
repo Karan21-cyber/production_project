@@ -11,6 +11,7 @@ import filesRouter from "./router/files-router";
 import { Server, Socket } from "socket.io";
 
 import cors from "cors";
+import chatRouter from "./router/chat-router";
 
 const app = express();
 const server = http.createServer(app);
@@ -32,7 +33,14 @@ app.get("/", (req: Request, res: Response) => {
   });
 });
 
-app.use(authRouter, userRouter, workspaceRouter, foldersRouter, filesRouter);
+app.use(
+  authRouter,
+  userRouter,
+  workspaceRouter,
+  foldersRouter,
+  filesRouter,
+  chatRouter,
+);
 app.use(errorMiddleware);
 
 createSubscriptionProduct();

@@ -162,6 +162,9 @@ const addUserInWorkspace = asyncHandler(async (req: Request, res: Response) => {
           createdAt: true,
           updatedAt: true,
         },
+        orderBy: {
+          createdAt: "asc",
+        },
       },
     },
   });
