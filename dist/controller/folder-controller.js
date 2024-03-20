@@ -42,13 +42,29 @@ exports.createfolder = (0, async_handler_1.default)((req, res) => __awaiter(void
             updatedAt: true,
         },
     });
+    const workspaces = yield prisma_1.default.workspace.findUnique({
+        where: {
+            id: folderCreate.workspaceId,
+        },
+    });
+    yield prisma_1.default.folderChat.create({
+        data: {
+            name: folderName,
+            folderId: folderCreate.id,
+            users: {
+                connect: {
+                    id: workspaces === null || workspaces === void 0 ? void 0 : workspaces.userId,
+                },
+            },
+        },
+    });
     return res.status(201).json({
         success: true,
         message: "folder created successfully",
         data: folderCreate,
     });
 }));
-const getfolderByUserId = (0, async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getFolderByWorkspaceId = (0, async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const folder = yield prisma_1.default.folder.findMany({
         where: {
@@ -69,6 +85,78 @@ const getfolderByUserId = (0, async_handler_1.default)((req, res) => __awaiter(v
         message: "folder fetched successfully",
         data: folder,
     });
+}));
+const getFolderByFolderId = (0, async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const files = yield prisma_1.default.folder.findUnique({
+            where: {
+                id: id,
+            },
+            select: {
+                files: {
+                    select: {
+                        id: true,
+                        name: true,
+                        folderId: true,
+                        createdAt: true,
+                        updatedAt: true,
+                    },
+                },
+            },
+        });
+        const folderChat = yield prisma_1.default.folderChat.findMany({
+            where: {
+                folderId: id,
+            },
+            select: {
+                id: true,
+                name: true,
+                folder: {
+                    select: {
+                        id: true,
+                        name: true,
+                        workspaceId: true,
+                        createdAt: true,
+                        updatedAt: true,
+                    },
+                },
+                users: {
+                    select: {
+                        id: true,
+                        fname: true,
+                        lname: true,
+                        email: true,
+                        phone: true,
+                        verified: true,
+                        address: true,
+                        image: true,
+                        createdAt: true,
+                        updatedAt: true,
+                    },
+                },
+                createdAt: true,
+                updatedAt: true,
+            },
+        });
+        if (!folderChat) {
+            return res.status(404).json({
+                success: false,
+                message: "Folder not found",
+            });
+        }
+        res.status(200).json({
+            success: true,
+            message: "Folder fetched successfully",
+            data: { folderChat, files },
+        });
+    }
+    catch (error) {
+        res.status(400).json({
+            success: false,
+            message: error || "Internal server error",
+        });
+    }
 }));
 const getAllFolder = (0, async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const folder = yield prisma_1.default.folder.findMany({
@@ -130,11 +218,125 @@ const deletefolder = (0, async_handler_1.default)((req, res) => __awaiter(void 0
         data: folder,
     });
 }));
+const getfolderByUserId = (0, async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const folderChats = yield prisma_1.default.folderChat.findFirst({
+        where: {
+            users: {
+                some: {
+                    id: id,
+                },
+            },
+        },
+        include: {
+            folder: {
+                select: {
+                    id: true,
+                    name: true,
+                    workspaceId: true,
+                    createdAt: true,
+                    updatedAt: true,
+                },
+            },
+            users: {
+                select: {
+                    id: true,
+                    fname: true,
+                    lname: true,
+                    email: true,
+                    phone: true,
+                    verified: true,
+                    address: true,
+                    image: true,
+                    createdAt: true,
+                    updatedAt: true,
+                },
+            },
+        },
+    });
+    if (!folderChats) {
+        return res.status(404).json({
+            success: false,
+            message: "Folder not found",
+        });
+    }
+    return res.status(200).json({
+        success: true,
+        message: "Folder fetched successfully",
+        data: folderChats,
+    });
+}));
+const addUsersInFolder = (0, async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { folderId } = req.params;
+    const { userList } = req.body;
+    try {
+        // Retrieve the folderChat using folderId
+        const folderChats = yield prisma_1.default.folderChat.findFirst({
+            where: {
+                folderId: folderId,
+            },
+            include: {
+                users: true, // Include existing users for the folderChat
+            },
+        });
+        if (!folderChats) {
+            return res.status(404).json({
+                success: false,
+                message: "Folder chat not found",
+            });
+        }
+        // Filter out any users already added to the folderChat
+        const newUsers = userList.filter((user) => {
+            return !folderChats.users.some((existingUser) => existingUser.id === user);
+        });
+        // Update the folderChat to add new users
+        const updatedFolderChat = yield prisma_1.default.folderChat.update({
+            where: {
+                id: folderChats.id,
+            },
+            data: {
+                users: {
+                    connect: newUsers.map((userId) => ({ id: userId })),
+                },
+            },
+            include: {
+                users: {
+                    select: {
+                        id: true,
+                        fname: true,
+                        lname: true,
+                        email: true,
+                        phone: true,
+                        verified: true,
+                        address: true,
+                        image: true,
+                        createdAt: true,
+                        updatedAt: true,
+                    },
+                }, // Include updated users for the folderChat
+            },
+        });
+        return res.status(201).json({
+            success: true,
+            message: "Users added to folder chat successfully",
+            data: updatedFolderChat,
+        });
+    }
+    catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error",
+        });
+    }
+}));
 const folderController = {
     createfolder: exports.createfolder,
-    getfolderByUserId,
+    getFolderByFolderId,
+    getFolderByWorkspaceId,
     updatefolder: exports.updatefolder,
     deletefolder,
     getAllFolder,
+    addUsersInFolder,
+    getfolderByUserId,
 };
 exports.default = folderController;

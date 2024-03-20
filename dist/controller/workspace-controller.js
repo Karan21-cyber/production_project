@@ -121,11 +121,65 @@ const deleteWorkspace = (0, async_handler_1.default)((req, res) => __awaiter(voi
         message: "Workspace deleted successfully",
     });
 }));
+const addUserInWorkspace = (0, async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    const { workspaceId } = req.params;
+    const { userId } = req.body;
+    const workspace = yield prisma_1.default.workspace.update({
+        where: {
+            id: workspaceId,
+        },
+        data: {
+            users: {
+                connect: {
+                    id: userId,
+                },
+            },
+        },
+        select: {
+            id: true,
+            name: true,
+            userId: true,
+            createdAt: true,
+            updatedAt: true,
+            users: {
+                select: {
+                    id: true,
+                    fname: true,
+                    lname: true,
+                    email: true,
+                    phone: true,
+                    verified: true,
+                    address: true,
+                    image: true,
+                    createdAt: true,
+                    updatedAt: true,
+                },
+            },
+        },
+    });
+    if (!workspace)
+        throw new http_exception_1.default(400, "Workspace not found");
+    const createChat = yield prisma_1.default.chat.create({
+        data: {
+            chatName: ((_a = workspace === null || workspace === void 0 ? void 0 : workspace.users[0]) === null || _a === void 0 ? void 0 : _a.fname) + " " + ((_b = workspace === null || workspace === void 0 ? void 0 : workspace.users[0]) === null || _b === void 0 ? void 0 : _b.lname),
+            groupAdmin: workspace === null || workspace === void 0 ? void 0 : workspace.userId,
+        },
+    });
+    if (!createChat)
+        throw new http_exception_1.default(400, "Chat not created");
+    return res.status(200).json({
+        success: true,
+        message: "User added successfully",
+        data: workspace,
+    });
+}));
 const workspaceController = {
     createWorkspace: exports.createWorkspace,
     getWorkspaceByUserId,
     updateWorkspace: exports.updateWorkspace,
     deleteWorkspace,
     getAllWorkspace,
+    addUserInWorkspace,
 };
 exports.default = workspaceController;

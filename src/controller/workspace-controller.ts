@@ -166,6 +166,17 @@ const addUserInWorkspace = asyncHandler(async (req: Request, res: Response) => {
     },
   });
 
+  if (!workspace) throw new HttpException(400, "Workspace not found");
+
+  const createChat = await prisma.chat.create({
+    data: {
+      chatName: workspace?.users[0]?.fname + " " + workspace?.users[0]?.lname,
+      groupAdmin: workspace?.userId,
+    },
+  });
+
+  if (!createChat) throw new HttpException(400, "Chat not created");
+
   return res.status(200).json({
     success: true,
     message: "User added successfully",

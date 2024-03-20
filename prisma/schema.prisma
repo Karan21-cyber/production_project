@@ -87,7 +87,7 @@ model Chat {
   id            String     @id @default(uuid())
   chatName      String
   isGroupChat   Boolean    @default(false)
-  latestMessage String
+  latestMessage String?
   groupAdmin    String
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
