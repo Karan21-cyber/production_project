@@ -7,7 +7,7 @@ const getChatsById = asyncHandler(async (req: Request, res: Response) => {
 
   const allUsers = await prisma.chat.findMany({
     where: {
-      groupAdmin: id,
+      OR: [{ groupAdmin: id }],
     },
     select: {
       id: true,
@@ -16,10 +16,8 @@ const getChatsById = asyncHandler(async (req: Request, res: Response) => {
       createdAt: true,
       updatedAt: true,
       latestMessage: true,
-      Messaage: true,
     },
   });
-
   return res.status(200).json({
     success: true,
     message: "Chats fetched successfully",

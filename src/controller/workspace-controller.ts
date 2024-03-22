@@ -175,6 +175,11 @@ const addUserInWorkspace = asyncHandler(async (req: Request, res: Response) => {
     data: {
       chatName: workspace?.users[0]?.fname + " " + workspace?.users[0]?.lname,
       groupAdmin: workspace?.userId,
+      users: {
+        connect: {
+          id: workspace?.id,
+        },
+      },
     },
   });
 

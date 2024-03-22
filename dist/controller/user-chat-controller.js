@@ -1,51 +1,42 @@
 "use strict";
-// import prisma from "../prisma";
-// import asyncHandler from "../utils/async-handler";
-// import { Request, Response } from "express";
-// // Handler function to create a new message in the chat
-// const createChatMessage = asyncHandler(async (req: Request, res: Response) => {
-//   try {
-//     const { content, chatId } = req.body;
-//     if (!content || !chatId) {
-//       return res.sendStatus(400);
-//     }
-//     // Create a new message in the database using Prisma
-//     const newMessage = await prisma.message.create({
-//       data: {
-//         content,
-//         chat: {
-//           connect: { id: chatId },
-//         },
-//         sender: {
-//           connect: { id: req.user._id }, // Assuming req.user._id is the sender's ID
-//         },
-//       },
-//       include: {
-//         sender: { select: { fname: true, picture: true } },
-//         chat: true,
-//       },
-//     });
-//     // Update the latestMessage field of the chat
-//     await prisma.chat.update({
-//       where: { id: chatId },
-//       data: { latestMessage: newMessage },
-//     });
-//     // Populate additional fields for the message
-//     const populatedMessage = await prisma.message.findUnique({
-//       where: { id: newMessage.id },
-//       include: {
-//         sender: { select: { fname: true, picture: true } },
-//         chat: { include: { users: { select: { fname: true, email: true } } } },
-//       },
-//     });
-//     res.json(populatedMessage);
-//   } catch (error) {
-//     console.error("Error sending message:", error);
-//     res
-//       .status(400)
-//       .send(error.message || "An error occurred while sending the message");
-//   }
-// });
-// export const userChatController = {
-//   createChatMessage,
-// };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const prisma_1 = __importDefault(require("../prisma"));
+const async_handler_1 = __importDefault(require("../utils/async-handler"));
+const getChatsById = (0, async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const allUsers = yield prisma_1.default.chat.findMany({
+        where: {
+            groupAdmin: id,
+        },
+        select: {
+            id: true,
+            chatName: true,
+            groupAdmin: true,
+            createdAt: true,
+            updatedAt: true,
+            latestMessage: true,
+            Messaage: true,
+        },
+    });
+    return res.status(200).json({
+        success: true,
+        message: "Chats fetched successfully",
+        data: allUsers,
+    });
+}));
+const chatController = {
+    getChatsById,
+};
+exports.default = chatController;

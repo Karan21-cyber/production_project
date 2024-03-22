@@ -155,6 +155,9 @@ const addUserInWorkspace = (0, async_handler_1.default)((req, res) => __awaiter(
                     createdAt: true,
                     updatedAt: true,
                 },
+                orderBy: {
+                    createdAt: "asc",
+                },
             },
         },
     });

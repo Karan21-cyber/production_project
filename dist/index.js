@@ -24,6 +24,7 @@ const folder_router_1 = __importDefault(require("./router/folder-router"));
 const files_router_1 = __importDefault(require("./router/files-router"));
 const socket_io_1 = require("socket.io");
 const cors_1 = __importDefault(require("cors"));
+const chat_router_1 = __importDefault(require("./router/chat-router"));
 const app = (0, express_1.default)();
 const server = http_1.default.createServer(app);
 const io = new socket_io_1.Server(server, {
@@ -41,7 +42,7 @@ app.get("/", (req, res) => {
         message: "Welcome to Production Project Server...",
     });
 });
-app.use(auth_router_1.default, user_router_1.default, workspace_router_1.default, folder_router_1.default, files_router_1.default);
+app.use(auth_router_1.default, user_router_1.default, workspace_router_1.default, folder_router_1.default, files_router_1.default, chat_router_1.default);
 app.use(error_middleware_1.default);
 (0, payment_sevices_1.default)();
 // Connection event with authenticated sockets
